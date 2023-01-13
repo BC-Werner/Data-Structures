@@ -55,7 +55,7 @@ public:
 	}
 	~List() { clear(); }
 
-	void push_front(T value) 
+	void push_front(const T& value) 
 	{
 		Node* newNode = new Node{value, nullptr, head};
 		if (head) head->prev = newNode;
@@ -64,7 +64,7 @@ public:
 		count++;
 	}
 
-	void push_back(T value)
+	void push_back(const T& value)
 	{
 		Node* newNode = new Node{value, nullptr, head};
 		if (tail) tail->next = newNode;
@@ -73,8 +73,9 @@ public:
 		count++;
 	}
 
-	Iterator insert(Iterator it, T value)
+	Iterator insert(Iterator it, const T& value)
 	{
+		if (!it.current) return it;
 		if (it.current == head) { push_front(value); return Iterator(head); }
 
 		Node* newNode = new Node{ value, it.current->prev, it.current };

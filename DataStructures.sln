@@ -5,6 +5,10 @@ VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LinkedList", "LinkedList\LinkedList.vcxproj", "{F41B0C9A-8635-41D3-8FEB-767B22B93471}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B9187B24-B694-4D01-98F9-C1468389A099}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LinkedListTests", "Tests\LinkedListTests\LinkedListTests.vcxproj", "{C6702766-ACEB-4A6B-BCC8-9CD1C9B17B7C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,9 +25,20 @@ Global
 		{F41B0C9A-8635-41D3-8FEB-767B22B93471}.Release|x64.Build.0 = Release|x64
 		{F41B0C9A-8635-41D3-8FEB-767B22B93471}.Release|x86.ActiveCfg = Release|Win32
 		{F41B0C9A-8635-41D3-8FEB-767B22B93471}.Release|x86.Build.0 = Release|Win32
+		{C6702766-ACEB-4A6B-BCC8-9CD1C9B17B7C}.Debug|x64.ActiveCfg = Debug|x64
+		{C6702766-ACEB-4A6B-BCC8-9CD1C9B17B7C}.Debug|x64.Build.0 = Debug|x64
+		{C6702766-ACEB-4A6B-BCC8-9CD1C9B17B7C}.Debug|x86.ActiveCfg = Debug|Win32
+		{C6702766-ACEB-4A6B-BCC8-9CD1C9B17B7C}.Debug|x86.Build.0 = Debug|Win32
+		{C6702766-ACEB-4A6B-BCC8-9CD1C9B17B7C}.Release|x64.ActiveCfg = Release|x64
+		{C6702766-ACEB-4A6B-BCC8-9CD1C9B17B7C}.Release|x64.Build.0 = Release|x64
+		{C6702766-ACEB-4A6B-BCC8-9CD1C9B17B7C}.Release|x86.ActiveCfg = Release|Win32
+		{C6702766-ACEB-4A6B-BCC8-9CD1C9B17B7C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C6702766-ACEB-4A6B-BCC8-9CD1C9B17B7C} = {B9187B24-B694-4D01-98F9-C1468389A099}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {02875521-AC20-4DA8-8A38-8EAA4DE449F0}

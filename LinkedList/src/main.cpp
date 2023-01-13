@@ -21,12 +21,11 @@ int main()
 	// ===============================================================
 	std::cout << "\nList of Integers" << std::endl;
 	List<int> intList{ 4, 6, 2, 1, 44, 1000, 39, 343, 33, 144};
-
-	std::cout << "\nSize: " << intList.Size() << std::endl;
+	intList.push_front(3);
 
 	std::cout << "\nPrinting..." << std::endl;
-	for (auto val : intList)
-		std::cout << val << std::endl;
+	for (auto& val : intList) std::cout << val++ << std::endl;
+	std::cout << "Size: " << intList.Size() << std::endl;
 
 	std::cout << "\nPopping front..." << std::endl;
 	intList.pop_front();
@@ -35,10 +34,10 @@ int main()
 	intList.pop_back();
 
 	std::cout << "\nPrinting..." << std::endl;
-	for (auto val : intList)
-		std::cout << val << std::endl;
+	for (auto val : intList) std::cout << val << std::endl;
+	std::cout << "Size: " << intList.Size() << std::endl;
 
-	int target = 1000;
+	int target = 1001;
 	std::cout << "\nInserting before node with value of " << target << "..." << std::endl;
 	List<int>::Iterator it = intList.begin();
 	while (it != intList.end() && *it != target)
@@ -46,23 +45,21 @@ int main()
 	intList.insert(it, target - 1);
 
 	std::cout << "Printing..." << std::endl;
-	for (auto val : intList)
-		std::cout << val << std::endl;
+	for (auto val : intList) std::cout << val << std::endl;
+	std::cout << "Size: " << intList.Size() << std::endl;
 
 	std::cout << "\nInserting at first position..." << std::endl;
 	intList.insert(intList.begin(), 0);
 
 	std::cout << "Printing..." << std::endl;
-	for (auto val : intList)
-		std::cout << val << std::endl;
+	for (auto val : intList) std::cout << val << std::endl;
+	std::cout << "Size: " << intList.Size() << std::endl;
 
 	std::cout << "\nClearing..." << std::endl;
 	intList.clear();
 
 	std::cout << "\nPrinting..." << std::endl;
-	for (auto val : intList)
-		std::cout << val << std::endl;
-
+	for (auto val : intList) std::cout << val << std::endl;
 	std::cout << "Size: " << intList.Size() << std::endl;
 
 	return 0;
