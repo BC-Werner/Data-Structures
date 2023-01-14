@@ -66,7 +66,7 @@ public:
 
 	void push_back(const T& value)
 	{
-		Node* newNode = new Node{value, nullptr, head};
+		Node* newNode = new Node{value, tail, nullptr};
 		if (tail) tail->next = newNode;
 		tail = newNode;
 		if (!head) head = tail;
