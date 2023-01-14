@@ -132,13 +132,13 @@ public:
 	void reverse()
 	{
 		Node* current = tail;
-		Node* temp = current->next;
+		Node* temp = nullptr;
 
 		while (current)
 		{
+			temp = current->next;
 			current->next = current->prev;
 			current->prev = temp;
-			temp = current;
 			current = current->next;
 		}
 
