@@ -45,15 +45,19 @@ public:
 		while (it != il.end())
 		{
 			node->next = new Node{*(it)++, node, nullptr};
-			//node->next->prev = node;
 			node = node->next;
-			//++it;
 		}
 
 		count = il.size();
 		tail = node;
 	}
 	~List() { clear(); }
+
+	const bool empty() const { return count == 0; }
+	const size_t Size() const { return count; }
+
+	Iterator begin() { return Iterator(head); }
+	Iterator end() { return Iterator(nullptr); }
 
 	void push_front(const T& value) 
 	{
@@ -146,11 +150,73 @@ public:
 		tail = current;
 		head = newHead;
 	}
-	//void sort();
 
-	const bool empty() const { return count == 0; }
-	const size_t Size() const { return count; }
+	void sort()
+	{
+		sort(head, std::less<T>());
+	}
 
-	Iterator begin() { return Iterator(head); }
-	Iterator end() { return Iterator(nullptr); }
+	template <typename Compare>
+	void sort(Compare comp)
+	{
+		sort(head, comp);
+	}
+
+private:
+	template <typename Compare>
+	void sort(Node*& head_ref, Compare comp)
+	{
+		Node* ptr = head_ref;
+		Node* a = nullptr;
+		Node* b = nullptr;
+
+		if (ptr == nullptr || ptr->next == nullptr) return;
+
+		split(ptr, a, b);
+		sort(a, comp);
+		sort(b, comp);
+		head_ref = mergeSortedLists(a, b, comp);
+	}
+
+	void split(Node* srcNode, Node*& aRef, Node*& bRef)
+	{
+		Node* fastPtr = srcNode->next;
+		Node* slowPtr = srcNode;
+
+		while (fastPtr != nullptr)
+		{
+			fastPtr = fastPtr->next;
+			if (fastPtr != nullptr)
+			{
+				slowPtr = slowPtr->next;
+				fastPtr = fastPtr->next;
+			}
+		}
+
+		aRef = srcNode;
+		bRef = slowPtr->next;
+		slowPtr->next = nullptr;
+	}
+
+	template <typename Compare>
+	Node* mergeSortedLists(Node* head1, Node* head2, Compare comp)
+	{
+		Node* result = nullptr;
+		if (head1 == nullptr) return head2;
+		if (head2 == nullptr) return head1;
+		if (comp(head1->data, head2->data))
+		{
+			head1->next = mergeSortedLists(head1->next, head2, comp);
+			head1->next->prev = head1;
+			head1->prev = nullptr;
+			return head1;
+		}
+		else
+		{
+			head2->next = mergeSortedLists(head1, head2->next, comp);
+			head2->next->prev = head2;
+			head2->prev = nullptr;
+			return head2;
+		}
+	}
 };
