@@ -129,7 +129,23 @@ public:
 		erase(begin(), end());
 	}
 
-	//void reverse();
+	void reverse()
+	{
+		Node* current = tail;
+		Node* temp = current->next;
+
+		while (current)
+		{
+			current->next = current->prev;
+			current->prev = temp;
+			temp = current;
+			current = current->next;
+		}
+
+		Node* newHead = tail;
+		tail = current;
+		head = newHead;
+	}
 	//void sort();
 
 	const bool empty() const { return count == 0; }

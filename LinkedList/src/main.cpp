@@ -55,6 +55,13 @@ int main()
 	for (auto val : intList) std::cout << val << std::endl;
 	std::cout << "Size: " << intList.Size() << std::endl;
 
+	std::cout << "\nReversing..." << std::endl;
+	intList.reverse();
+
+	std::cout << "Printing..." << std::endl;
+	for (auto val : intList) std::cout << val << std::endl;
+	std::cout << "Size: " << intList.Size() << std::endl;
+
 	std::cout << "\nClearing..." << std::endl;
 	intList.clear();
 
