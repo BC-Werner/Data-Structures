@@ -1,5 +1,6 @@
 #pragma once
 #include <initializer_list>
+#include <functional>
 
 template <typename T>
 class List {
@@ -58,6 +59,12 @@ public:
 
 	Iterator begin() { return Iterator(head); }
 	Iterator end() { return Iterator(nullptr); }
+
+	T& front() { return head->data; }
+	const T& front() const { return head->data; }
+
+	T& back() { return tail->data; }
+	const T& back() const { return tail->data; }
 
 	void push_front(const T& value) 
 	{
