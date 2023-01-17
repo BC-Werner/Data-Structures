@@ -33,6 +33,39 @@ public:
 	};
 
 	List() : head(nullptr), tail(nullptr), count(0) {}
+	List(const List<T>& other) 
+		: head(nullptr), tail(nullptr), count(0)
+	{
+		Node* lhsNode = nullptr;
+		Node* rhsNode = other.head;
+
+		if (rhsNode)
+		{
+			lhsNode = new Node{ rhsNode->data, nullptr, nullptr};
+			head = lhsNode;
+			tail = lhsNode;
+
+			rhsNode = rhsNode->next;
+		}
+
+		while (rhsNode && lhsNode)
+		{
+			lhsNode->next = new Node{ rhsNode->data, nullptr, nullptr };
+			tail = lhsNode;
+			lhsNode = lhsNode->next;
+			rhsNode = rhsNode->next;
+		}
+
+		count = other.count;
+	}
+	List(List<T>&& other)
+	{
+		count = other.count;
+		head = other.head;
+		tail = other.tail;
+		other.head = nullptr;
+		other.tail = nullptr;
+	}
 	List(const std::initializer_list<T>& il)
 		: head(nullptr), tail(nullptr), count(0)
 	{
