@@ -2,33 +2,32 @@
 
 #include "Vector.hpp"
 
+template <typename T>
+void print(Vector<T>& vec)
+{
+	std::cout << "Vector { ";
+	for (auto val : vec) std::cout << val << " ";
+	std::cout << "}" << std::endl;
+}
+
 int main()
 {
-	Vector<int> vec{ 1, 2, 3 };
-	std::cout << "Initialize   Size/Capacity [" << vec.size() << "|" << vec.capacity() << "]" << std::endl;
+	Vector<int> vec{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+	std::cout << "Size/Capacity [" << vec.size() << "|" << vec.capacity() << "]" << std::endl;
+	print(vec);
 
-	vec.push_back(55);
-	std::cout << "Pushing...   Size/Capacity [" << vec.size() << "|" << vec.capacity() << "]" << std::endl;
-	vec.push_back(30);
-	std::cout << "Pushing...   Size/Capacity [" << vec.size() << "|" << vec.capacity() << "]" << std::endl;
-	vec.push_back(6);
-	std::cout << "Pushing...   Size/Capacity [" << vec.size() << "|" << vec.capacity() << "]" << std::endl;
+	Vector<int> vecMove(std::move(vec));
+	Vector<int> vecCopy(vecMove);
 
-	vec.pop_back();
-	std::cout << "Popping...   Size/Capacity [" << vec.size() << "|" << vec.capacity() << "]" << std::endl;
-	vec.shrink_to_fit();
-	std::cout << "Shrinking... Size/Capacity [" << vec.size() << "|" << vec.capacity() << "]" << std::endl;
+	std::cout << "Size/Capacity [" << vec.size() << "|" << vec.capacity() << "]" << std::endl;
+	std::cout << "Size/Capacity [" << vecMove.size() << "|" << vecMove.capacity() << "]" << std::endl;
+	std::cout << "Size/Capacity [" << vecCopy.size() << "|" << vecCopy.capacity() << "]" << std::endl;
 
-	std::cout << "Vector { ";
-	for (size_t i = 0; i < vec.size(); i++) std::cout << vec[i] << " ";
-	std::cout << "}" << std::endl;
+	print(vec);
+	print(vecMove);
+	print(vecCopy);
 
-	vec.clear();
-	std::cout << "Clearing...  Size/Capacity [" << vec.size() << "|" << vec.capacity() << "]" << std::endl;
-
-	std::cout << "Vector { ";
-	for (size_t i = 0; i < vec.size(); i++) std::cout << vec[i] << " ";
-	std::cout << "}" << std::endl;
+	std::cout << "Front: " << vecMove.front() << " Back: " << vecMove.back() << std::endl;
 
 	return 0;
 }

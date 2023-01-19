@@ -1,16 +1,42 @@
 #pragma once
 
 #include <initializer_list>
-#include <iostream>
 
 template<typename T>
 class Vector
 {
 public:
+	class Iterator
+	{
+	public:
+		using value_type = T;
+		using pointer = T*;
+		using reference = T&;
+
+		Iterator(pointer p) : ptr(p) {}
+
+		reference operator*() const { return *ptr; }
+		pointer operator->() const { return ptr; }
+		Iterator operator++() { ptr++; return *this; }
+		Iterator operator++(int) { Iterator tmp = *this; ++(*this); return tmp; }
+		Iterator operator--() { ptr--; return *this; }
+		Iterator operator--(int) { Iterator tmp = *this; --(*this); return tmp; }
+		Iterator operator+=(int n) { for (int i = 0; i < n; i++) ++(*this); return *this; }
+		bool operator==(const Iterator& other) { return ptr == other.ptr; }
+		bool operator!=(const Iterator& other) const { return ptr != other.ptr; }
+
+		pointer data() const { return ptr; }
+
+	private:
+		pointer ptr;
+	};
+
 	Vector()
+		: m_size(0)
 	{
 		allocate(1);
 	}
+
 	Vector(const std::initializer_list<T>& il)
 	{
 		allocate(il.size());
@@ -24,11 +50,28 @@ public:
 		}
 	}
 
+	Vector(Vector const& copy)
+		: m_capacity(copy.m_size), m_size(0)
+	{
+		allocate(m_capacity);
+
+		for (int loop = 0; loop < copy.m_size; ++loop)
+			push_back(copy.m_data[loop]);
+	}
+
+	Vector(Vector&& move) noexcept
+		: m_capacity(0), m_size(0), m_data(nullptr)
+	{
+		move.swap(*this);
+	}
+
+	~Vector() { delete[] m_data; m_data = nullptr; }
+
 	// Capacity
 	bool empty() const { return m_size == 0; }
 	size_t size() const { return m_size; }
-	void reserve(size_t newCap) { if (newCap <= m_capacity) return; allocate(newCap); }
 	size_t capacity() const { return m_capacity; }
+	void reserve(size_t newCap) { if (newCap <= m_capacity) return; allocate(newCap); }
 	void shrink_to_fit() { if (m_size != m_capacity) allocate(m_size); }
 
 	// Modifiers
@@ -37,20 +80,60 @@ public:
 		m_size = 0;
 		allocate(m_capacity);
 	};
-	//void insert(Iterator pos, const T& data) {};
-	//Iterator erase(Iterator pos) {};
-	//Iterator erase(Iterator start, Iterator end) {};
+
+	Iterator erase(Iterator pos) 
+	{
+		const Iterator newPos = pos;
+		Iterator tmp = pos;
+		tmp++;
+
+		while (pos != end())
+		{
+			*pos = *tmp;
+			pos++;
+			tmp++;
+		}
+		m_size--;
+		return newPos;
+	};
+
+	Iterator erase(const Iterator& first, const Iterator& last) 
+	{
+		const Iterator toReturn = first;
+		Iterator f = first;
+		Iterator l = last;
+		bool shouldDecrease = true;
+		int count = 0;
+
+		while (f != end())
+		{
+			if (f == last) shouldDecrease = false;
+			if (shouldDecrease) count++;
+			if (l != end())
+			{
+				*f = *l;
+				l++;
+			}
+			f++;
+		}
+
+		m_size -= count;
+		return toReturn;
+	}
+
 	void push_back(const T& data) 
 	{
 		if (m_size >= m_capacity) allocate(m_capacity * 2);
 		m_data[m_size] = data;
 		m_size++;
 	};
+
 	void pop_back() { if (m_size > 0) resize(m_size - 1); };
+
 	void resize(size_t count) 
 	{
-		if (count > m_capacity) allocate(count);
-		if (m_size <= count)
+		if (count > m_capacity) { allocate(count); }
+		if (m_size < count)
 		{
 			for (size_t i = m_size; i < count; i++)
 			{
@@ -60,24 +143,23 @@ public:
 			return;
 		}
 
-		if (m_size > count) m_size = count;
-
+		if (m_size > count) { m_size = count; allocate(m_capacity); }
 	}
 
 	// Iterators
+	Iterator begin() { return Iterator(&m_data[0]); }
+	Iterator end() { return Iterator(&m_data[m_size]); }
 
 	// Element Access
 	T& operator[](size_t index) { return m_data[index]; }
 	const T& operator[](size_t index) const { return m_data[index]; }
-	// Below throws std::out_of_range
-	// if (pos >= m_size)
-	//T& at(size_t pos) {}
-	//const T& at(size_t pos) const {}
+	T& at(size_t pos) { if (pos >= m_size || pos < 0) throw std::out_of_range; return m_data[pos]; }
+	const T& at(size_t pos) const { if (pos >= m_size || pos < 0) throw std::out_of_range;  return m_data[pos]; }
 
-	T& front() { return m_data[0];					/* Should eventually return *begin(); */}
-	const T& front() const { return m_data[0];		/* Should eventually return *begin(); */} 
-	T& back() { return m_data[m_size-1];				/* Should eventually return *std::prev(end()); */ }
-	const T& back() const { return m_data[m_size-1];	/* Should eventually return *std::prev(end()); */ }
+	T& front() { return *begin(); }
+	T& back() { return *(--end()); }
+	const T& front() const { return *begin(); } 
+	const T& back() const { return *(--end()); }
 
 private:
 	void allocate(size_t newCap)
@@ -88,11 +170,18 @@ private:
 			m_size = newCap;
 
 		for (size_t i = 0; i < m_size; i++)
-			newBlock[i] = m_data[i];
+			newBlock[i] = std::move(m_data[i]);
 
 		delete[] m_data;
 		m_data = newBlock;
 		m_capacity = newCap;
+	}
+
+	void swap(Vector& other) noexcept
+	{
+		std::swap(m_capacity, other.m_capacity);
+		std::swap(m_size, other.m_size);
+		std::swap(m_data, other.m_data);
 	}
 
 	T* m_data = nullptr;
