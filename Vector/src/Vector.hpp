@@ -68,11 +68,11 @@ public:
 	~Vector() { delete[] m_data; m_data = nullptr; }
 
 	// Capacity
-	bool empty() const { return m_size == 0; }
-	size_t size() const { return m_size; }
-	size_t capacity() const { return m_capacity; }
-	void reserve(size_t newCap) { if (newCap <= m_capacity) return; allocate(newCap); }
-	void shrink_to_fit() { if (m_size != m_capacity) allocate(m_size); }
+	bool	empty() const			{ return m_size == 0; }
+	size_t	size() const			{ return m_size; }
+	size_t	capacity() const		{ return m_capacity; }
+	void	reserve(size_t newCap)	{ if (newCap <= m_capacity) return; allocate(newCap); }
+	void	shrink_to_fit()			{ if (m_size != m_capacity) allocate(m_size); }
 
 	// Modifiers
 	void clear() 
@@ -121,6 +121,32 @@ public:
 		return toReturn;
 	}
 
+	Iterator insert(Iterator& pos, const T& data)
+	{
+		if (m_size + 1 > m_capacity) return insert_reallocate(pos, data);
+
+		// resize by one
+		// move all elements back by one up to pos
+		// set new data at pos
+
+		resize(m_size + 1);
+
+		Iterator iter = end();
+		Iterator prevIter = end();
+		iter--;
+		while (iter != begin() && iter != pos)
+		{
+			iter--;
+			prevIter--;
+			*prevIter = *iter;
+		}
+
+		prevIter--;
+		*prevIter = data;
+
+		return prevIter;
+	}
+
 	void push_back(const T& data) 
 	{
 		if (m_size >= m_capacity) allocate(m_capacity * 2);
@@ -147,19 +173,21 @@ public:
 	}
 
 	// Iterators
-	Iterator begin() { return Iterator(&m_data[0]); }
-	Iterator end() { return Iterator(&m_data[m_size]); }
+	Iterator begin()	{ return Iterator(&m_data[0]); }
+	Iterator end()		{ return Iterator(&m_data[m_size]); }
 
 	// Element Access
-	T& operator[](size_t index) { return m_data[index]; }
-	const T& operator[](size_t index) const { return m_data[index]; }
-	T& at(size_t pos) { if (pos >= m_size || pos < 0) throw std::out_of_range; return m_data[pos]; }
-	const T& at(size_t pos) const { if (pos >= m_size || pos < 0) throw std::out_of_range;  return m_data[pos]; }
+	T&			operator[](size_t index)		{ return m_data[index]; }
+	const T&	operator[](size_t index) const	{ return m_data[index]; }
+	T&			at(size_t pos)					{ if (pos >= m_size || pos < 0) throw std::out_of_range("Invalid address."); return m_data[pos]; }
+	const T&	at(size_t pos) const			{ if (pos >= m_size || pos < 0) throw std::out_of_range("Invalid address.");  return m_data[pos]; }
 
-	T& front() { return *begin(); }
-	T& back() { return *(--end()); }
-	const T& front() const { return *begin(); } 
-	const T& back() const { return *(--end()); }
+	T&			front()			{ return *begin(); }
+	const T&	front() const	{ return *begin(); } 
+	T&			back()			{ return *(--end()); }
+	const T&	back() const	{ return *(--end()); }
+
+	Iterator iterator_at(size_t index) { if (index < 0 || index >= m_size) throw std::out_of_range("Invalid address."); return Iterator(&m_data[index]); }
 
 private:
 	void allocate(size_t newCap)
@@ -182,6 +210,29 @@ private:
 		std::swap(m_capacity, other.m_capacity);
 		std::swap(m_size, other.m_size);
 		std::swap(m_data, other.m_data);
+	}
+
+	Iterator insert_reallocate(Iterator& pos, const T& data)
+	{
+		Vector<T> newVector(*this);
+		newVector.resize(newVector.size() + 1);
+
+		Iterator iter = end();
+		Iterator newIter = newVector.end();
+
+		while (iter != begin() && iter != pos)
+		{
+			iter--;
+			newIter--;
+
+			*newIter = *iter;
+		}
+
+		newIter--;
+		*newIter = data;
+
+		swap(newVector);
+		return newIter;
 	}
 
 	T* m_data = nullptr;
