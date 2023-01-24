@@ -50,7 +50,7 @@ public:
 
 		while (rhsNode && lhsNode)
 		{
-			lhsNode->next = new Node{ rhsNode->data, nullptr, nullptr };
+			lhsNode->next = new Node{ rhsNode->data, lhsNode, nullptr };
 			tail = lhsNode;
 			lhsNode = lhsNode->next;
 			rhsNode = rhsNode->next;
@@ -58,13 +58,15 @@ public:
 
 		count = other.count;
 	}
-	List(List<T>&& other)
+	List(List<T>&& other) noexcept
+		: head(nullptr), tail(nullptr), count(0)
 	{
-		count = other.count;
-		head = other.head;
-		tail = other.tail;
-		other.head = nullptr;
-		other.tail = nullptr;
+		other.swap(*this);
+		//count = other.count;
+		//head = other.head;
+		//tail = other.tail;
+		//other.head = nullptr;
+		//other.tail = nullptr;
 	}
 	List(const std::initializer_list<T>& il)
 		: head(nullptr), tail(nullptr), count(0)
@@ -258,5 +260,12 @@ private:
 			head2->prev = nullptr;
 			return head2;
 		}
+	}
+
+	void swap(List& other) noexcept
+	{
+		std::swap(head, other.head);
+		std::swap(tail, other.tail);
+		std::swap(count, other.count);
 	}
 };
