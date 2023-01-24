@@ -25,10 +25,7 @@ int main()
 	std::cout << "Size/Capacity [" << vecMove.size() << "|" << vecMove.capacity() << "]" << std::endl;
 	std::cout << "Size/Capacity [" << vecCopy.size() << "|" << vecCopy.capacity() << "]" << std::endl;
 
-	auto iter = vecMove.begin();
-	iter++;
-	iter++;
-	iter++;
+	auto iter = vecMove.iterator_at(3);
 	iter = vecMove.insert(iter, 0);
 
 	std::cout << "Vector at position 3: " << *iter << std::endl;
