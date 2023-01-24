@@ -12,7 +12,7 @@ namespace LinkedListTests
 		TEST_METHOD(constructor_ShouldBeEmpty)
 		{
 			List<int> newList;
-			int actual = (int)newList.Size();
+			int actual = (int)newList.size();
 
 			Assert::AreEqual(0, actual);
 		}
@@ -20,7 +20,7 @@ namespace LinkedListTests
 		TEST_METHOD(constructor_initializerlist_shouldHaveSizeFour)
 		{
 			List<int> newList{ 2, 2, 2, 2 };
-			int actual = (int)newList.Size();
+			int actual = (int)newList.size();
 
 			Assert::AreEqual(4, actual);
 		}
@@ -31,7 +31,7 @@ namespace LinkedListTests
 			List<int> actual;
 			actual.push_front(1);
 
-			Assert::AreEqual(1, (int)actual.Size());
+			Assert::AreEqual(1, (int)actual.size());
 
 			List<int>::Iterator exp = expected.begin();
 			List<int>::Iterator act = actual.begin();
@@ -49,7 +49,7 @@ namespace LinkedListTests
 			List<int> actual;
 			actual.push_back(1);
 
-			Assert::AreEqual(1, (int)actual.Size());
+			Assert::AreEqual(1, (int)actual.size());
 
 			List<int>::Iterator exp = expected.begin();
 			List<int>::Iterator act = actual.begin();
@@ -67,7 +67,7 @@ namespace LinkedListTests
 			List<int> actual{ 2, 2, 2, 2 };
 			actual.push_back(1);
 
-			Assert::AreEqual((int)actual.Size(), (int)actual.Size());
+			Assert::AreEqual((int)actual.size(), (int)actual.size());
 
 			List<int>::Iterator exp = expected.begin();
 			List<int>::Iterator act = actual.begin();
@@ -85,7 +85,7 @@ namespace LinkedListTests
 			List<int> actual{ 2, 2, 2, 2 };
 			actual.push_front(1);
 
-			Assert::AreEqual((int)actual.Size(), (int)actual.Size());
+			Assert::AreEqual((int)actual.size(), (int)actual.size());
 
 			List<int>::Iterator exp = expected.begin();
 			List<int>::Iterator act = actual.begin();
@@ -103,7 +103,7 @@ namespace LinkedListTests
 			List<int> actual{ 2 };
 			actual.pop_front();
 
-			Assert::AreEqual(0, (int)actual.Size());
+			Assert::AreEqual(0, (int)actual.size());
 
 			List<int>::Iterator exp = expected.begin();
 			List<int>::Iterator act = actual.begin();
@@ -121,7 +121,7 @@ namespace LinkedListTests
 			List<int> actual{ 2 };;
 			actual.pop_back();
 
-			Assert::AreEqual(0, (int)actual.Size());
+			Assert::AreEqual(0, (int)actual.size());
 
 			List<int>::Iterator exp = expected.begin();
 			List<int>::Iterator act = actual.begin();
@@ -139,7 +139,7 @@ namespace LinkedListTests
 			List<int> actual{ 2, 2, 2, 2, 1 };
 			actual.pop_back();
 
-			Assert::AreEqual((int)actual.Size(), (int)actual.Size());
+			Assert::AreEqual((int)actual.size(), (int)actual.size());
 
 			List<int>::Iterator exp = expected.begin();
 			List<int>::Iterator act = actual.begin();
@@ -157,7 +157,7 @@ namespace LinkedListTests
 			List<int> actual{ 1, 2, 2, 2, 2 };
 			actual.pop_front();
 
-			Assert::AreEqual((int)actual.Size(), (int)actual.Size());
+			Assert::AreEqual((int)actual.size(), (int)actual.size());
 
 			List<int>::Iterator exp = expected.begin();
 			List<int>::Iterator act = actual.begin();
@@ -178,7 +178,7 @@ namespace LinkedListTests
 			it++;
 			actual.insert(it, 3);
 
-			Assert::AreEqual((int)actual.Size(), (int)actual.Size());
+			Assert::AreEqual((int)actual.size(), (int)actual.size());
 
 			List<int>::Iterator exp = expected.begin();
 			List<int>::Iterator act = actual.begin();
@@ -197,7 +197,7 @@ namespace LinkedListTests
 			List<int>::Iterator it = actual.begin();
 			actual.insert(it, 3);
 
-			Assert::AreEqual((int)actual.Size(), (int)actual.Size());
+			Assert::AreEqual((int)actual.size(), (int)actual.size());
 
 			List<int>::Iterator exp = expected.begin();
 			List<int>::Iterator act = actual.begin();
@@ -216,7 +216,7 @@ namespace LinkedListTests
 			List<int>::Iterator it = actual.begin();
 			actual.insert(it, 3);
 
-			Assert::AreEqual((int)actual.Size(), (int)actual.Size());
+			Assert::AreEqual((int)actual.size(), (int)actual.size());
 
 			List<int>::Iterator exp = expected.begin();
 			List<int>::Iterator act = actual.begin();
@@ -235,7 +235,7 @@ namespace LinkedListTests
 			List<int>::Iterator it = actual.end();
 			actual.insert(it, 3);
 
-			Assert::AreEqual((int)actual.Size(), (int)actual.Size());
+			Assert::AreEqual((int)actual.size(), (int)actual.size());
 
 			List<int>::Iterator exp = expected.begin();
 			List<int>::Iterator act = actual.begin();
@@ -254,7 +254,7 @@ namespace LinkedListTests
 			List<int>::Iterator it = actual.begin();
 			actual.erase(it);
 
-			Assert::AreEqual((int)actual.Size(), (int)actual.Size());
+			Assert::AreEqual((int)actual.size(), (int)actual.size());
 
 			List<int>::Iterator exp = expected.begin();
 			List<int>::Iterator act = actual.begin();
@@ -273,7 +273,7 @@ namespace LinkedListTests
 			List<int>::Iterator it = actual.end();
 			actual.erase(it);
 
-			Assert::AreEqual((int)actual.Size(), (int)actual.Size());
+			Assert::AreEqual((int)actual.size(), (int)actual.size());
 
 			List<int>::Iterator exp = expected.begin();
 			List<int>::Iterator act = actual.begin();
@@ -301,7 +301,7 @@ namespace LinkedListTests
 
 			actual.erase(start, end);
 
-			Assert::AreEqual((int)actual.Size(), (int)actual.Size());
+			Assert::AreEqual((int)actual.size(), (int)actual.size());
 
 			List<int>::Iterator exp = expected.begin();
 			List<int>::Iterator act = actual.begin();
@@ -326,7 +326,7 @@ namespace LinkedListTests
 
 			actual.erase(start, end);
 
-			Assert::AreEqual((int)actual.Size(), (int)actual.Size());
+			Assert::AreEqual((int)actual.size(), (int)actual.size());
 
 			List<int>::Iterator exp = expected.begin();
 			List<int>::Iterator act = actual.begin();
@@ -351,7 +351,7 @@ namespace LinkedListTests
 
 			actual.erase(start, end);
 
-			Assert::AreEqual((int)actual.Size(), (int)actual.Size());
+			Assert::AreEqual((int)actual.size(), (int)actual.size());
 
 			List<int>::Iterator exp = expected.begin();
 			List<int>::Iterator act = actual.begin();
@@ -370,7 +370,7 @@ namespace LinkedListTests
 			List<int> actual{3, 3, 3, 1, 1, 1, 1, 1 };
 			actual.clear();
 
-			Assert::AreEqual((int)actual.Size(), (int)actual.Size());
+			Assert::AreEqual((int)actual.size(), (int)actual.size());
 			Assert::IsTrue(actual.empty());
 
 			List<int>::Iterator exp = expected.begin();
@@ -390,7 +390,7 @@ namespace LinkedListTests
 			List<int> actual{ 23, 5, 22, 3, 4, 21, 3 };
 			actual.reverse();
 
-			Assert::AreEqual((int)actual.Size(), (int)actual.Size());
+			Assert::AreEqual((int)actual.size(), (int)actual.size());
 
 			List<int>::Iterator exp = expected.begin();
 			List<int>::Iterator act = actual.begin();
@@ -409,7 +409,7 @@ namespace LinkedListTests
 			List<int> actual{ 23, 5, 22, 3, 4, 21, 3 };
 			actual.sort();
 
-			Assert::AreEqual((int)actual.Size(), (int)actual.Size());
+			Assert::AreEqual((int)actual.size(), (int)actual.size());
 
 			List<int>::Iterator exp = expected.begin();
 			List<int>::Iterator act = actual.begin();
@@ -428,7 +428,7 @@ namespace LinkedListTests
 			List<int> actual{ 23, 5, 22, 3, 4, 21, 3 };
 			actual.sort(std::greater<int>());
 
-			Assert::AreEqual((int)actual.Size(), (int)actual.Size());
+			Assert::AreEqual((int)actual.size(), (int)actual.size());
 
 			List<int>::Iterator exp = expected.begin();
 			List<int>::Iterator act = actual.begin();

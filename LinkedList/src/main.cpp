@@ -8,7 +8,7 @@ void print(List<T> & list, std::string name)
 	std::cout << "\n" << name << "..." << std::endl;
 	for (const auto& value : list) std::cout << value << " ";
 	if (!list.empty()) std::cout << std::endl;
-	std::cout << "Size: " << list.Size() << std::endl;
+	std::cout << "Size: " << list.size() << std::endl;
 }
 
 int main()

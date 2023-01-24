@@ -62,11 +62,6 @@ public:
 		: head(nullptr), tail(nullptr), count(0)
 	{
 		other.swap(*this);
-		//count = other.count;
-		//head = other.head;
-		//tail = other.tail;
-		//other.head = nullptr;
-		//other.tail = nullptr;
 	}
 	List(const std::initializer_list<T>& il)
 		: head(nullptr), tail(nullptr), count(0)
@@ -90,16 +85,16 @@ public:
 	~List() { clear(); }
 
 	const bool empty() const { return count == 0; }
-	const size_t Size() const { return count; }
+	const size_t size() const { return count; }
 
 	Iterator begin() { return Iterator(head); }
 	Iterator end() { return Iterator(nullptr); }
 
-	T& front() { return head->data; }
-	const T& front() const { return head->data; }
+	T& front() { if (!head) throw std::exception("Front is nullptr. Cannot retrieve data."); return head->data; }
+	const T& front() const { if (!head) throw std::exception("Front is nullptr. Cannot retrieve data."); return head->data; }
 
-	T& back() { return tail->data; }
-	const T& back() const { return tail->data; }
+	T& back() { if (!tail) throw std::exception("Tail is nullptr. Cannot retrieve data."); return tail->data; }
+	const T& back() const { if (!tail) throw std::exception("Tail is nullptr. Cannot retrieve data."); return tail->data; }
 
 	void push_front(const T& value) 
 	{
