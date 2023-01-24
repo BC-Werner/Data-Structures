@@ -204,6 +204,13 @@ public:
 		sort(head, comp);
 	}
 
+
+	void swap(List& other) noexcept
+	{
+		std::swap(head, other.head);
+		std::swap(tail, other.tail);
+		std::swap(count, other.count);
+	}
 private:
 	template <typename Compare>
 	void sort(Node*& head_ref, Compare comp)
@@ -260,12 +267,5 @@ private:
 			head2->prev = nullptr;
 			return head2;
 		}
-	}
-
-	void swap(List& other) noexcept
-	{
-		std::swap(head, other.head);
-		std::swap(tail, other.tail);
-		std::swap(count, other.count);
 	}
 };

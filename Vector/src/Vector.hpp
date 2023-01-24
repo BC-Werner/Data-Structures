@@ -147,6 +147,13 @@ public:
 		if (m_size > count) { m_size = count; allocate(m_capacity); }
 	}
 
+	void swap(Vector& other) noexcept
+	{
+		std::swap(m_capacity, other.m_capacity);
+		std::swap(m_size, other.m_size);
+		std::swap(m_data, other.m_data);
+	}
+
 	void		push_back(const T& data)		{ if (m_size >= m_capacity) allocate(m_capacity * 2); m_data[m_size++] = data; };
 	void		pop_back()						{ if (m_size > 0) resize(m_size - 1); };
 	void		clear()							{ m_size = 0; allocate(m_capacity); };
@@ -181,13 +188,6 @@ private:
 		delete[] m_data;
 		m_data = newBlock;
 		m_capacity = newCap;
-	}
-
-	void swap(Vector& other) noexcept
-	{
-		std::swap(m_capacity, other.m_capacity);
-		std::swap(m_size, other.m_size);
-		std::swap(m_data, other.m_data);
 	}
 
 	Iterator insert_reallocate(Iterator& pos, const T& data)
