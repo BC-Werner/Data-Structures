@@ -162,17 +162,17 @@ public:
 	size_t		capacity() const				{ return m_capacity; }
 	void		reserve(size_t newCap)			{ if (newCap <= m_capacity) return; allocate(newCap); }
 	void		shrink_to_fit()					{ if (m_size != m_capacity) allocate(m_size); }
-	T&			at(size_t pos)					{ if (pos >= m_size || pos < 0) throw std::out_of_range("Invalid address."); return m_data[pos]; }
 	const T&	at(size_t pos) const			{ if (pos >= m_size || pos < 0) throw std::out_of_range("Invalid address.");  return m_data[pos]; }
-	T&			front()							{ return *begin(); }
 	const T&	front() const					{ return *begin(); } 
-	T&			back()							{ return *(--end()); }
 	const T&	back() const					{ return *(--end()); }
 	Iterator	begin()							{ return Iterator(&m_data[0]); }
 	Iterator	end()							{ return Iterator(&m_data[m_size]); }
 	Iterator	iterator_at(size_t i)			{ if (i < 0 || i >= m_size) throw std::out_of_range("Invalid address."); return Iterator(&m_data[i]); }
-	T&			operator[](size_t index)		{ return m_data[index]; }
 	const T&	operator[](size_t index) const	{ return m_data[index]; }
+	T&	operator[](size_t index)		{ return m_data[index]; }
+	T&	at(size_t pos)					{ if (pos >= m_size || pos < 0) throw std::out_of_range("Invalid address."); return m_data[pos]; }
+	T&	front()							{ return *begin(); }
+	T&	back()							{ return *(--end()); }
 
 private:
 	void allocate(size_t newCap)
