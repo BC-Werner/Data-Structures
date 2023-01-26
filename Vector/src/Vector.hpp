@@ -169,10 +169,10 @@ public:
 	Iterator	end()							{ return Iterator(&m_data[m_size]); }
 	Iterator	iterator_at(size_t i)			{ if (i < 0 || i >= m_size) throw std::out_of_range("Invalid address."); return Iterator(&m_data[i]); }
 	const T&	operator[](size_t index) const	{ return m_data[index]; }
-	T&	operator[](size_t index)		{ return m_data[index]; }
-	T&	at(size_t pos)					{ if (pos >= m_size || pos < 0) throw std::out_of_range("Invalid address."); return m_data[pos]; }
-	T&	front()							{ return *begin(); }
-	T&	back()							{ return *(--end()); }
+	T&		operator[](size_t index)		{ return m_data[index]; }
+	T&		at(size_t pos)					{ if (pos >= m_size || pos < 0) throw std::out_of_range("Invalid address."); return m_data[pos]; }
+	T&		front()							{ return *begin(); }
+	T&		back()							{ return *(--end()); }
 
 private:
 	void allocate(size_t newCap)
