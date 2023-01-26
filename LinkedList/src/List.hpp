@@ -84,17 +84,19 @@ public:
 	}
 	~List() { clear(); }
 
-	const bool empty() const { return count == 0; }
-	const size_t size() const { return count; }
+	const bool		empty() const	{ return count == 0; }
+	const size_t	size() const	{ return count; }
 
-	Iterator begin() { return Iterator(head); }
-	Iterator end() { return Iterator(nullptr); }
+	Iterator		begin()			{ return Iterator(head); }
+	Iterator		end()			{ return Iterator(nullptr); }
 
-	T& front() { if (!head) throw std::exception("Front is nullptr. Cannot retrieve data."); return head->data; }
-	const T& front() const { if (!head) throw std::exception("Front is nullptr. Cannot retrieve data."); return head->data; }
+	T&				front()			{ return *begin(); }
+	T&				back()			{ return *_backIter(); }
+	const T&		back() const	{ return *_backIter(); }
+	const T&		front()	const	{ return *begin(); }
 
-	T& back() { if (!tail) throw std::exception("Tail is nullptr. Cannot retrieve data."); return tail->data; }
-	const T& back() const { if (!tail) throw std::exception("Tail is nullptr. Cannot retrieve data."); return tail->data; }
+	void			pop_front()		{ erase(Iterator(head)); }
+	void			pop_back()		{ erase(Iterator(tail)); }
 
 	void push_front(const T& value) 
 	{
@@ -125,16 +127,6 @@ public:
 		count++;
 
 		return Iterator(newNode);
-	}
-
-	void pop_front()
-	{
-		erase(Iterator(head));
-	}
-
-	void pop_back()
-	{
-		erase(Iterator(tail));
 	}
 
 	Iterator erase(Iterator it)
@@ -207,6 +199,8 @@ public:
 		std::swap(count, other.count);
 	}
 private:
+	Iterator _backIter() { return Iterator(&tail); }
+
 	template <typename Compare>
 	void sort(Node*& head_ref, Compare comp)
 	{
