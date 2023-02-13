@@ -12,6 +12,8 @@ public:
 	Queue(Queue<T, Container>&& other) noexcept : m_size(0), container() { other.swap(*this); }
 	~Queue() { clear(); }
 
+
+
 	const bool		empty() const		{ return m_size == 0; }
 	const size_t	size() const		{ return m_size; }
 	T&				top()				{ return container.front(); }
