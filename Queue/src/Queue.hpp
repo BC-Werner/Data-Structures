@@ -14,10 +14,10 @@ public:
 
 	const bool		empty() const		{ return m_size == 0; }
 	const size_t	size() const		{ return m_size; }
-	T&				top() const			{ return container.front(); }
-	void			push(const T& data) { container.push_back(data); }
-	void			pop()				{ container.pop_front(); }
-	void			clear()				{ container.clear(); count = container.size(); }
+	T&				top()				{ return container.front(); }
+	void			push(const T& data) { container.push_back(data); m_size = container.size(); }
+	void			pop()				{ container.pop_front(); m_size = container.size(); }
+	void			clear()				{ container.clear(); m_size = container.size(); }
 
 	void swap(Queue<T, Container>& other) noexcept
 	{
