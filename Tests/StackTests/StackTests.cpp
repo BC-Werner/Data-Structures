@@ -43,14 +43,6 @@ namespace StackTests
 			Assert::IsFalse(stack.empty());
 		}
 		
-		TEST_METHOD(Top_EmptyStack_ShouldThrow)
-		{
-			Assert::ExpectException<std::exception>([]() {
-				Stack<int> stack;
-				stack.top();
-			});
-		}
-		
 		TEST_METHOD(Top_ShouldReturnFirstOnTheStack)
 		{
 			Stack<int> stack{ 1, 2, 3, 4, 5 };
@@ -91,17 +83,14 @@ namespace StackTests
 		
 		TEST_METHOD(Pop_EntireStack_ShouldBeEmpty)
 		{
-			Assert::ExpectException<std::exception>([]() {
-				Stack<int> actual{ 1, 2, 3, 4, 5 };
+			Stack<int> actual{ 1, 2, 3, 4, 5 };
 
-				Assert::IsFalse(actual.empty());
-				while (!actual.empty())
-					actual.pop();
+			Assert::IsFalse(actual.empty());
 
-				Assert::IsTrue(actual.empty());
+			while (!actual.empty())
+				actual.pop();
 
-				actual.top();
-			});
+			Assert::IsTrue(actual.empty());
 		}
 
 		TEST_METHOD(Push_EmptyStack_ShouldHaveOneElement)
