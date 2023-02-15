@@ -6,39 +6,38 @@ void print(Queue<T>& queue, std::string name)
 {
 	Queue<T> temp;
 
-	std::cout << name << "..." << std::endl;
+	std::cout << "Printing " << name << "..." << std::endl;
 	if (queue.empty()) 
 	{
 		std::cout << "EMPTY" << std::endl;
 		return;
 	}
 
-	print(queue);
-}
+	while (!queue.empty())
+	{
+		T val = queue.top();
+		queue.pop();
+		std::cout << val << " " << (queue.empty() ? "" : "-> ");
+		temp.push(val);
+	}
+	std::cout << std::endl;
 
-template<typename T>
-void print(Queue<T>& queue)
-{
-	if (queue.empty()) return;
-
-	T val = queue.top();
-	queue.pop();
-	std::cout << val << " " << (queue.empty() ? "" : "-> ");
-	print(queue);
-	queue.push(val);
+	queue.swap(temp);
 }
 
 int main()
 {
 	Queue<int> q1{ 1, 2, 3, 4, 5 };
+	Queue<int> qCopy = q1;
 
 	print(q1, "Q1");
+	print(qCopy, "Q Copy");
 
-	std::cout << "Popping..." << std::endl;
-	while (!q1.empty())
-		q1.pop();
+	std::cout << "Moving Q Copy..." << std::endl;
+	Queue<int> qMove = std::move(qCopy);
 
-	print(q1, "Q1");
+	print(qMove, "Q Move");
+	print(qCopy, "Q Copy");
 
 	return 0;
 }
