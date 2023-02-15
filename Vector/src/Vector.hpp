@@ -154,25 +154,25 @@ public:
 		std::swap(m_data, other.m_data);
 	}
 
-	void		push_back(const T& data)		{ if (m_size >= m_capacity) allocate(m_capacity * 2); m_data[m_size++] = data; };
-	void		pop_back()						{ if (m_size > 0) resize(m_size - 1); };
-	void		clear()							{ m_size = 0; allocate(m_capacity); };
-	bool		empty() const					{ return m_size == 0; }
-	size_t		size() const					{ return m_size; }
-	size_t		capacity() const				{ return m_capacity; }
-	void		reserve(size_t newCap)			{ if (newCap <= m_capacity) return; allocate(newCap); }
-	void		shrink_to_fit()					{ if (m_size != m_capacity) allocate(m_size); }
-	const T&	at(size_t pos) const			{ if (pos >= m_size || pos < 0) throw std::out_of_range("Invalid address.");  return m_data[pos]; }
-	const T&	front() const					{ return *begin(); } 
-	const T&	back() const					{ return *(--end()); }
-	Iterator	begin()							{ return Iterator(&m_data[0]); }
-	Iterator	end()							{ return Iterator(&m_data[m_size]); }
-	Iterator	iterator_at(size_t i)			{ if (i < 0 || i >= m_size) throw std::out_of_range("Invalid address."); return Iterator(&m_data[i]); }
-	const T&	operator[](size_t index) const	{ return m_data[index]; }
-	T&		operator[](size_t index)		{ return m_data[index]; }
-	T&		at(size_t pos)					{ if (pos >= m_size || pos < 0) throw std::out_of_range("Invalid address."); return m_data[pos]; }
-	T&		front()							{ return *begin(); }
-	T&		back()							{ return *(--end()); }
+	void        push_back(const T& data)        { if (m_size >= m_capacity) allocate(m_capacity * 2); m_data[m_size++] = data; };
+	void        pop_back()                      { if (m_size > 0) resize(m_size - 1); };
+	void        clear()                         { m_size = 0; allocate(m_capacity); };
+	bool        empty() const                   { return m_size == 0; }
+	size_t      size() const                    { return m_size; }
+	size_t      capacity() const                { return m_capacity; }
+	void        reserve(size_t newCap)          { if (newCap <= m_capacity) return; allocate(newCap); }
+	void        shrink_to_fit()                 { if (m_size != m_capacity) allocate(m_size); }
+	const T&    at(size_t pos) const            { if (pos >= m_size || pos < 0) throw std::out_of_range("Invalid address.");  return m_data[pos]; }
+	const T&    front() const                   { return *begin(); } 
+	const T&    back() const                    { return *(--end()); }
+	Iterator    begin()                         { return Iterator(&m_data[0]); }
+	Iterator    end()                           { return Iterator(&m_data[m_size]); }
+	Iterator    iterator_at(size_t i)           { if (i < 0 || i >= m_size) throw std::out_of_range("Invalid address."); return Iterator(&m_data[i]); }
+	const T&    operator[](size_t index) const  { return m_data[index]; }
+	T&          operator[](size_t index)        { return m_data[index]; }
+	T&          at(size_t pos)                  { if (pos >= m_size || pos < 0) throw std::out_of_range("Invalid address."); return m_data[pos]; }
+	T&          front()                         { return *begin(); }
+	T&          back()                          { return *(--end()); }
 
 private:
 	void allocate(size_t newCap)
