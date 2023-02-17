@@ -36,7 +36,16 @@ int main()
 	bst.insert(62);
 	bst.insert(60);
 
-	BinaryTree<int>::Iterator toDel = bst.find(65);
+	// Third Try
+	//bst.insert(20);
+	//bst.insert(25);
+	//bst.insert(10);
+	//bst.insert(5);
+	//bst.insert(8);
+	//bst.insert(7);
+	//bst.insert(2);
+
+	BinaryTree<int>::Iterator toDel = bst.find(50);
 
 	bst.print();
 	bst.erase(toDel);

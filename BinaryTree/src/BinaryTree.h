@@ -16,6 +16,7 @@ private:
 		BNode* pRight;
 		BNode* pParent;
 	};
+
 public:
 	class Iterator
 	{
@@ -92,90 +93,128 @@ public:
 		if (!it.p) return;
 
 		BNode* toDel = it.p;
-		BNode* parent = it.p->pParent;
+		BNode* toDelParent = it.p->pParent;
 
 		// Node is the root
-		if (toDel == m_root)
+
+		// Node has no children
+		if (!toDel->pLeft && !toDel->pRight)
 		{
-			// Root Has a left child
-			// - Go left once and then right all the way down
-			if (toDel->pLeft)
-			{
-				BNode* tmp = toDel->pLeft;
-				while (tmp->pRight)
-				{
-					tmp = tmp->pRight;
-				}
+			if (toDelParent->pLeft == toDel) toDelParent->pLeft = nullptr;
+			if (toDelParent->pRight == toDel) toDelParent->pRight = nullptr;
 
-				// Swap tmp and toDel
-				if (tmp != toDel->pLeft) tmp->pLeft = toDel->pLeft;
-				tmp->pRight = toDel->pRight;
-				tmp->pParent->pRight = nullptr;
-				tmp->pParent = toDel->pParent;
-
-				delete toDel;
-				m_root = tmp;
-
-				return;
-			}
-
-			// Root Has a right child
-			// - Go right once and then left all the way down
-			if (toDel->pRight)
-			{
-				BNode* tmp = toDel->pRight;
-				while (tmp->pLeft)
-				{
-					tmp = tmp->pLeft;
-				}
-
-				// Swap tmp and toDel
-				tmp->pLeft = toDel->pLeft;
-				if (tmp != toDel->pRight) tmp->pRight = toDel->pRight;
-				tmp->pParent->pLeft = nullptr;
-				tmp->pParent = toDel->pParent;
-
-				delete toDel;
-				m_root = tmp;
-
-				return;
-			}
-
-			// Root Has no children
 			delete toDel;
-			m_root = nullptr;
+
 			return;
 		}
 
 		// Node has both children
 		if (toDel->pLeft && toDel->pRight)
 		{
-			BNode* tmp = toDel->pLeft;
-			while (tmp->pRight)
+			// Find successor
+			// set successors parent to point to successors right (we were searching left until left was null. so the successor node could have a right)
+			// set successors right parent to point to successors parent
+			// set successors parent to toDel parent
+			// set toDel parent to point to successor
+			// set successor right to point to toDel right
+			// set successor left to point to toDel left
+
+			BNode* successor = inorder_successor(toDel);
+			if (successor)
 			{
-				tmp = tmp->pRight;
+				BNode* successorParent = successor->pParent;
+
+				if (successor->pParent != toDel)
+				{
+					successor->pParent = toDelParent;
+					if (toDelParent->pLeft == toDel) toDelParent->pLeft = successor;
+					if (toDelParent->pRight == toDel) toDelParent->pRight = successor;
+
+					successorParent->pLeft = successor->pRight;
+					if (successor->pRight) successor->pRight->pParent = successorParent;
+
+					successor->pRight = toDel->pRight;
+					toDel->pRight->pParent = successor;
+					successor->pLeft = toDel->pLeft;
+					toDel->pLeft->pParent = successor;
+				}
+				else
+				{
+					// Set successor parent to toDel parent
+					// set successor left to toDel left (if successor is not toDel left)
+					// set successor right to toDel right (if successor is not toDel right)
+					successor->pParent = toDel->pParent;
+					if (toDelParent->pLeft == toDel) toDelParent->pLeft = successor;
+					if (toDelParent->pRight == toDel) toDelParent->pRight = successor;
+
+					if (toDel->pRight == successor)
+					{
+						successor->pLeft = toDel->pLeft;
+						toDel->pLeft->pParent = successor;
+					}
+					if (toDel->pLeft == successor)
+					{
+						successor->pRight = toDel->pRight;
+						toDel->pRight->pParent = successor;
+					}
+				}
 			}
 
-			// Swap tmp and toDel
-			tmp->pParent->pRight = tmp->pLeft;
-			tmp->pParent = toDel->pParent;
-			if (toDel->pParent->pLeft == toDel) toDel->pParent->pLeft = tmp;
-			if (toDel->pParent->pRight == toDel) toDel->pParent->pRight = tmp;
-			tmp->pLeft = toDel->pLeft;
-			tmp->pRight = toDel->pRight;
+			delete toDel;
+
+			return;
 		}
 
-		// TODO:
 		// Node has left only child
-		// Node has right only child
-
-		// Node has no children
-		if (!toDel->pLeft && !toDel->pRight)
+		if (toDel->pLeft)
 		{
-			if (toDel->pParent->pLeft == toDel) toDel->pParent->pLeft = nullptr;
-			if (toDel->pParent->pRight == toDel) toDel->pParent->pRight = nullptr;
+			// Find successor
+			// set successors parent to point to successors left (we were searching right until right was null. so the successor node could have a left)
+			// set successors left parent to point to successors parent
+			// set successors parent to toDel parent
+			// set toDel parent to point to successor
+			// set successor left to point to toDel left
+
+			BNode* successor = inorder_successor(toDel);
+			if (successor)
+			{
+				successor->pParent->pRight = successor->pLeft;
+				if (successor->pLeft) successor->pLeft->pParent = successor->pParent;
+				successor->pParent = toDel->pParent;
+				if (toDelParent->pLeft == toDel) toDelParent->pLeft = successor;
+				if (toDelParent->pRight == toDel) toDelParent->pRight = successor;
+				if (successor != toDel->pLeft) successor->pLeft = toDel->pLeft;
+			}
 
 			delete toDel;
+
+			return;
+		}
+
+		// Node has right only child
+		if (toDel->pRight)
+		{
+			// Find successor
+			// set successors parent to point to successors right (we were searching left until left was null. so the successor node could have a right)
+			// set successors right parent to point to successors parent
+			// set successors parent to toDel parent
+			// set toDel parent to point to successor
+			// set successor right to point to toDel right
+
+			BNode* successor = inorder_successor(toDel);
+			if (successor)
+			{
+				successor->pParent->pLeft = successor->pRight;
+				if (successor->pRight) successor->pRight->pParent = successor->pParent;
+				successor->pParent = toDel->pParent;
+				if (toDelParent->pLeft == toDel) toDelParent->pLeft = successor;
+				if (toDelParent->pRight == toDel) toDelParent->pRight = successor;
+				if (successor != toDel->pRight) successor->pRight = toDel->pRight;
+			}
+
+			delete toDel;
+
+			return;
 		}
 	}
 
@@ -187,6 +226,26 @@ public:
 	void print() { print_impl(m_root); std::cout << std::endl; }
 
 private:
+	BNode* inorder_successor(BNode* sub_root)
+	{
+		BNode* successor = nullptr;
+
+		if (sub_root->pRight)
+		{
+			successor = sub_root->pRight;
+			while (successor && successor->pLeft) successor = successor->pLeft;
+			return successor;
+		}
+		if (sub_root->pLeft)
+		{
+			BNode* successor = sub_root->pLeft;
+			while (successor && successor->pRight) successor = successor->pRight;
+			return successor;
+		}
+
+		return nullptr;
+	}
+
 	void print_impl(BNode* root)
 	{
 		if (!root) return;
