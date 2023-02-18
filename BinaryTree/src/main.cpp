@@ -4,52 +4,35 @@
 
 int main()
 {
-	BinaryTree<int> bst;
-
-	// First Try
-	//bst.insert(5);
-	//bst.insert(2);
-	//bst.insert(4);
-	//bst.insert(9);
-
-	// Second Try
-	bst.insert(70);
-	bst.insert(72);
-	bst.insert(65);
-	bst.insert(30);
-	bst.insert(66);
-	bst.insert(20);
-	bst.insert(10);
-	bst.insert(25);
-	bst.insert(5);
-	bst.insert(15);
-	bst.insert(22);
-	bst.insert(26);
-	bst.insert(50);
-	bst.insert(40);
-	bst.insert(45);
-	bst.insert(35);
-	bst.insert(55);
-	bst.insert(54);
-	bst.insert(64);
-	bst.insert(61);
-	bst.insert(62);
-	bst.insert(60);
-
-	// Third Try
-	//bst.insert(20);
-	//bst.insert(25);
-	//bst.insert(10);
-	//bst.insert(5);
-	//bst.insert(8);
-	//bst.insert(7);
-	//bst.insert(2);
+	BinaryTree<int> bst{ 70, 72, 65, 30, 66, 20, 10, 25, 5, 15, 22, 26, 50, 40, 45, 35, 55, 54, 64, 61, 62, 60 };
 
 	BinaryTree<int>::Iterator toDel = bst.find(50);
 
+	std::cout << "BST: { ";
 	bst.print();
+	std::cout << " } size: " << bst.size() << std::endl;
+
 	bst.erase(toDel);
+
+	std::cout << "BST: { ";
 	bst.print();
+	std::cout << " } size: " << bst.size() << std::endl;
+
+
+	BinaryTree<int>::Iterator iter = bst.begin();
+
+	while (iter != bst.end())
+	{
+		std::cout << "Iter: " << *iter << std::endl;
+		iter++;
+	}
+
+	std::cout << "BST: { ";
+	for (auto it : bst)
+	{
+		std::cout << it << " ";
+	}
+	std::cout << " } size: " << bst.size() << std::endl;
 
 	return 0;
 }

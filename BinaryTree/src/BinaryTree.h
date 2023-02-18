@@ -1,5 +1,8 @@
 #pragma once
 
+#include <initializer_list>
+#include "../../Vector/src/Vector.hpp"
+
 template <typename T>
 class BinaryTree
 {
@@ -22,16 +25,82 @@ public:
 	{
 	private:
 		BNode* p;
+		BNode* const tree_root;
+		Vector<BNode*> predecessors;
+
+		void findPredecessors(const BNode* p) 
+		{
+			if (!tree_root) return;
+
+			predecessors.clear();
+
+			BNode* tmp = tree_root;
+			while (tmp->pLeft)
+				tmp = tmp->pLeft;
+
+			predecessors.push_back(tmp);
+
+			while (tmp && tmp != p)
+			{
+				if (tmp->pRight && !contains(tmp->pRight))
+				{
+					tmp = tmp->pRight;
+					while (tmp->pLeft)
+						tmp = tmp->pLeft;
+					predecessors.push_back(tmp);
+				}
+				else
+				{
+					tmp = tmp->pParent;
+					if (!contains(tmp))
+						predecessors.push_back(tmp);
+				}
+			}
+		}
+
+		const bool contains(BNode* p) { for (auto node : predecessors) if (node == p) return true; return false; }
+
 	public:
-		Iterator() {}
-		Iterator(BNode* ptr) : p(ptr) {}
-		Iterator(Iterator const& rhs) : p(rhs.p) {}
+		//Iterator() {}
+		Iterator(BNode* ptr, BNode* root) : p(ptr), tree_root(root)             { findPredecessors(p); }
+		Iterator(Iterator const& rhs)     : p(rhs.p), tree_root(rhs.tree_root)  { findPredecessors(p); }
 
 		//Iterator         operator=(Iterator& rhs) {}
-		bool             operator==(Iterator& it) { return it.p = p; }
-		bool             operator!=(Iterator& it) { return it.p != p; }
-		Iterator&        operator++()             {}
-		Iterator&        operator--()             {}
+		bool             operator==(const Iterator& it) const { return it.p = p; }
+		bool             operator!=(const Iterator& it) const { return it.p != p; }
+		Iterator&        operator++()
+		{
+			predecessors.push_back(p);
+			// Find Successor
+			// if node has a right go right then as far left as possible
+			// if node has no right go to its parent until its parent is not in the list of predecessors
+			if (p->pRight)
+			{
+				p = p->pRight;
+				while (p->pLeft)
+					p = p->pLeft;
+			}
+			else
+			{
+				if (p->pParent) p = p->pParent;
+				while (p && contains(p))
+					p = p->pParent;
+			}
+
+			return *this;
+		}
+		Iterator&        operator--() 
+		{ 
+			if (predecessors.size() < 1) 
+			{ 
+				p = nullptr; 
+				return *this; 
+			} 
+
+			p = predecessors.back(); 
+			predecessors.pop_back();
+			return* this;
+	    }
 		const Iterator&  operator++(int)          { Iterator tmp = *this; ++(*this); return tmp; }
 		const Iterator&  operator--(int)          { Iterator tmp = *this; --(*this); return tmp; }
 		T                operator*()              { return p->data; }
@@ -46,19 +115,26 @@ private:
 
 // Methods
 public:
-	BinaryTree() : m_size(0), m_root(nullptr) {}
-	BinaryTree(BinaryTree const& rhs) : m_size(0), m_root(nullptr) {}
+	BinaryTree()                                   : m_size(0), m_root(nullptr) {}
+	BinaryTree(BinaryTree const& rhs)              : m_size(0), m_root(nullptr) {}
+	BinaryTree(const std::initializer_list<T>& il) : m_size(0), m_root(nullptr) { for (auto x : il) insert(x); };
 	~BinaryTree() { clear(); }
 
-	BinaryTree&  operator=(BinaryTree rhs)  {}
+	Iterator    begin()                     { return Iterator(findMin(), m_root); }
+	Iterator    end()                       { return Iterator(nullptr, m_root); }
+	Iterator    find(T const& t)            { return Iterator(find_impl(m_root, t), m_root); }
 	size_t      size()  const               { return m_size; }
 	bool        empty() const               { return m_size == 0; }
+	void        clear()                     { clear_impl(m_root); }
+	void        print()                     { print_impl(m_root); };
+	//BinaryTree&  operator=(BinaryTree rhs)  {}
 
 	void insert(T const& t) 
 	{
 		if (!m_root)
 		{
 			m_root = new BNode(t);
+			m_size++;
 			return;
 		}
 
@@ -85,18 +161,29 @@ public:
 			parent->pRight = new BNode(t);
 			parent->pRight->pParent = parent;
 		}
+
+		m_size++;
 	}
 
 	void erase(Iterator const& it)
 	{
+		// Case 1
 		// Node is nullptr
 		if (!it.p) return;
+
+		// Case 2
+		// Node is the root
+		if (it.p == m_root)
+		{
+			delete it.p;
+			m_root = nullptr;
+			return;
+		}
 
 		BNode* toDel = it.p;
 		BNode* toDelParent = it.p->pParent;
 
-		// Node is the root
-
+		// Case 3
 		// Node has no children
 		if (!toDel->pLeft && !toDel->pRight)
 		{
@@ -104,10 +191,12 @@ public:
 			if (toDelParent->pRight == toDel) toDelParent->pRight = nullptr;
 
 			delete toDel;
+			m_size--;
 
 			return;
 		}
 
+		// Case 4
 		// Node has both children
 		if (toDel->pLeft && toDel->pRight)
 		{
@@ -122,31 +211,31 @@ public:
 			BNode* successor = inorder_successor(toDel);
 			if (successor)
 			{
+				// Keep a reference to the successors original parent 
 				BNode* successorParent = successor->pParent;
 
-				if (successor->pParent != toDel)
-				{
-					successor->pParent = toDelParent;
-					if (toDelParent->pLeft == toDel) toDelParent->pLeft = successor;
-					if (toDelParent->pRight == toDel) toDelParent->pRight = successor;
+				// Set successor parent to point to toDel parent
+				// Set toDel parent to point to successor
+				successor->pParent = toDelParent;
+				if (toDelParent->pLeft == toDel) toDelParent->pLeft = successor;
+				if (toDelParent->pRight == toDel) toDelParent->pRight = successor;
 
+				// The successor is not a child of toDel
+				if (successorParent != toDel)
+				{
+					// The successors original parent should point to the successors right child
 					successorParent->pLeft = successor->pRight;
 					if (successor->pRight) successor->pRight->pParent = successorParent;
 
+					// Swap successors children with toDel children
 					successor->pRight = toDel->pRight;
 					toDel->pRight->pParent = successor;
 					successor->pLeft = toDel->pLeft;
 					toDel->pLeft->pParent = successor;
 				}
+				// The successor is a child of toDel
 				else
 				{
-					// Set successor parent to toDel parent
-					// set successor left to toDel left (if successor is not toDel left)
-					// set successor right to toDel right (if successor is not toDel right)
-					successor->pParent = toDel->pParent;
-					if (toDelParent->pLeft == toDel) toDelParent->pLeft = successor;
-					if (toDelParent->pRight == toDel) toDelParent->pRight = successor;
-
 					if (toDel->pRight == successor)
 					{
 						successor->pLeft = toDel->pLeft;
@@ -161,10 +250,12 @@ public:
 			}
 
 			delete toDel;
+			m_size--;
 
 			return;
 		}
 
+		// Case 5
 		// Node has left only child
 		if (toDel->pLeft)
 		{
@@ -187,10 +278,12 @@ public:
 			}
 
 			delete toDel;
+			m_size--;
 
 			return;
 		}
 
+		// Case 6
 		// Node has right only child
 		if (toDel->pRight)
 		{
@@ -213,17 +306,11 @@ public:
 			}
 
 			delete toDel;
+			m_size--;
 
 			return;
 		}
 	}
-
-	void        clear()          {}
-	Iterator    find(T const& t) { return Iterator(find_impl(m_root, t)); }
-	Iterator    begin()          { return Iterator(findMin()); }
-	Iterator    end()            { return Iterator(nullptr); }
-
-	void print() { print_impl(m_root); std::cout << std::endl; }
 
 private:
 	BNode* inorder_successor(BNode* sub_root)
@@ -238,7 +325,7 @@ private:
 		}
 		if (sub_root->pLeft)
 		{
-			BNode* successor = sub_root->pLeft;
+			successor = sub_root->pLeft;
 			while (successor && successor->pRight) successor = successor->pRight;
 			return successor;
 		}
@@ -261,6 +348,18 @@ private:
 
 		if (root->data > target) return find_impl(root->pLeft, target);
 		if (root->data < target) return find_impl(root->pRight, target);
+	}
+
+	void clear_impl(BNode* root)
+	{
+		if (!root) return;
+
+		clear_impl(root->pLeft);
+		clear_impl(root->pRight);
+
+		std::cout << "Deleting: " << root->data << std::endl;
+		delete root;
+		m_size--;
 	}
 
 	BNode* findMin() const 
