@@ -115,9 +115,9 @@ private:
 
 // Methods
 public:
-	BinaryTree()                                   : m_size(0), m_root(nullptr) {}
+	BinaryTree()                                    : m_size(0), m_root(nullptr) {}
 	BinaryTree(BinaryTree const& copy)              : m_size(0), m_root(nullptr) { copyTree(copy.m_root); }
-	BinaryTree(const std::initializer_list<T>& il) : m_size(0), m_root(nullptr) { for (auto x : il) insert(x); };
+	BinaryTree(const std::initializer_list<T>& il)  : m_size(0), m_root(nullptr) { for (auto x : il) insert(x); };
 	BinaryTree(BinaryTree&& move) noexcept          : m_size(0), m_root(nullptr) { move.swap(*this); }
 	~BinaryTree() { clear(); }
 
