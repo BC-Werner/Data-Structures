@@ -25,7 +25,7 @@ public:
 	{
 	private:
 		BNode* p;
-		BNode* const tree_root;
+		BNode* tree_root;
 		Vector<BNode*> predecessors;
 
 		void findPredecessors(const BNode* p) 
@@ -65,7 +65,7 @@ public:
 		Iterator(BNode* ptr, BNode* root) : p(ptr), tree_root(root)             { findPredecessors(p); }
 		Iterator(Iterator const& rhs)     : p(rhs.p), tree_root(rhs.tree_root)  { findPredecessors(p); }
 
-		//Iterator         operator=(Iterator& rhs) {}
+		void             operator=(Iterator const& rhs) { p = rhs.p; tree_root = rhs.tree_root; findPredecessors(p); }
 		bool             operator==(const Iterator& it) const { return it.p = p; }
 		bool             operator!=(const Iterator& it) const { return it.p != p; }
 		Iterator&        operator++()
@@ -116,8 +116,9 @@ private:
 // Methods
 public:
 	BinaryTree()                                   : m_size(0), m_root(nullptr) {}
-	BinaryTree(BinaryTree const& rhs)              : m_size(0), m_root(nullptr) {}
+	BinaryTree(BinaryTree const& copy)              : m_size(0), m_root(nullptr) { copyTree(copy.m_root); }
 	BinaryTree(const std::initializer_list<T>& il) : m_size(0), m_root(nullptr) { for (auto x : il) insert(x); };
+	BinaryTree(BinaryTree&& move) noexcept          : m_size(0), m_root(nullptr) { move.swap(*this); }
 	~BinaryTree() { clear(); }
 
 	Iterator    begin()                     { return Iterator(findMin(), m_root); }
@@ -126,8 +127,7 @@ public:
 	size_t      size()  const               { return m_size; }
 	bool        empty() const               { return m_size == 0; }
 	void        clear()                     { clear_impl(m_root); }
-	void        print()                     { print_impl(m_root); };
-	//BinaryTree&  operator=(BinaryTree rhs)  {}
+	void        operator=(BinaryTree rhs)   { m_size = rhs.m_size; m_root = rhs.m_root; }
 
 	void insert(T const& t) 
 	{
@@ -167,6 +167,9 @@ public:
 
 	void erase(Iterator const& it)
 	{
+		// Return iterator to predecessor?
+		Iterator tmp = it;
+		tmp--;
 		// Case 1
 		// Node is nullptr
 		if (!it.p) return;
@@ -333,14 +336,6 @@ private:
 		return nullptr;
 	}
 
-	void print_impl(BNode* root)
-	{
-		if (!root) return;
-		print_impl(root->pLeft);
-		std::cout << root->data << " ";
-		print_impl(root->pRight);
-	}
-
 	BNode* find_impl(BNode* root, T const& target)
 	{
 		if (root->data == target || !root)
@@ -356,10 +351,6 @@ private:
 
 		clear_impl(root->pLeft);
 		clear_impl(root->pRight);
-
-		std::cout << "Deleting: " << root->data << std::endl;
-		delete root;
-		m_size--;
 	}
 
 	BNode* findMin() const 
@@ -386,5 +377,20 @@ private:
 		}
 
 		return tmp;
+	}
+
+	void copyTree(BNode* root)
+	{
+		if (!root) return;
+
+		insert(root->data);
+		copyTree(root->pLeft);
+		copyTree(root->pRight);
+	}
+
+	void swap(BinaryTree& other)
+	{
+		std::swap(m_size, other.m_size);
+		std::swap(m_root, other.m_root);
 	}
 };

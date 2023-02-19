@@ -2,37 +2,34 @@
 
 #include "BinaryTree.h"
 
-int main()
+template <typename T>
+void print(BinaryTree<T>& bst, std::string name)
 {
-	BinaryTree<int> bst{ 70, 72, 65, 30, 66, 20, 10, 25, 5, 15, 22, 26, 50, 40, 45, 35, 55, 54, 64, 61, 62, 60 };
-
-	BinaryTree<int>::Iterator toDel = bst.find(50);
-
-	std::cout << "BST: { ";
-	bst.print();
-	std::cout << " } size: " << bst.size() << std::endl;
-
-	bst.erase(toDel);
-
-	std::cout << "BST: { ";
-	bst.print();
-	std::cout << " } size: " << bst.size() << std::endl;
-
-
-	BinaryTree<int>::Iterator iter = bst.begin();
-
-	while (iter != bst.end())
-	{
-		std::cout << "Iter: " << *iter << std::endl;
-		iter++;
-	}
-
-	std::cout << "BST: { ";
+	std::cout << name << ": { ";
 	for (auto it : bst)
 	{
 		std::cout << it << " ";
 	}
 	std::cout << " } size: " << bst.size() << std::endl;
+}
+
+int main()
+{
+	BinaryTree<int> bst{ 70, 72, 65, 30, 66, 20, 10, 25, 5, 15, 22, 26, 50, 40, 45, 35, 55, 54, 64, 61, 62, 60 };
+	BinaryTree<int> bstCopy(bst);
+
+	BinaryTree<int>::Iterator toDelete = bst.find(50);
+	print(bst, "BST");
+	print(bstCopy, "BST Copy");
+
+	bst.erase(toDelete);
+	BinaryTree<int> bstMove(std::move(bst));
+	print(bstMove, "BST Move");
+
+
+	print(bst, "BST");
+	print(bstCopy, "BST Copy");
+
 
 	return 0;
 }
