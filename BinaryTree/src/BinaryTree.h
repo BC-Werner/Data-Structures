@@ -61,12 +61,11 @@ public:
 		const bool contains(BNode* p) { for (auto node : predecessors) if (node == p) return true; return false; }
 
 	public:
-		//Iterator() {}
 		Iterator(BNode* ptr, BNode* root) : p(ptr), tree_root(root)             { findPredecessors(p); }
 		Iterator(Iterator const& rhs)     : p(rhs.p), tree_root(rhs.tree_root)  { findPredecessors(p); }
 
 		void             operator=(Iterator const& rhs) { p = rhs.p; tree_root = rhs.tree_root; findPredecessors(p); }
-		bool             operator==(const Iterator& it) const { return it.p = p; }
+		bool             operator==(const Iterator& it) const { return it.p == p; }
 		bool             operator!=(const Iterator& it) const { return it.p != p; }
 		Iterator&        operator++()
 		{
@@ -338,7 +337,7 @@ private:
 
 	BNode* find_impl(BNode* root, T const& target)
 	{
-		if (root->data == target || !root)
+		if (!root || root->data == target)
 			return root;
 
 		if (root->data > target) return find_impl(root->pLeft, target);
