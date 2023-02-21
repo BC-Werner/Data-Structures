@@ -25,6 +25,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BinaryTree", "BinaryTree\Bi
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BinaryTreeTests", "Tests\BinaryTreeTests\BinaryTreeTests.vcxproj", "{92B01FCF-3D7F-4F7F-AF9B-C1A5754343EE}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RBTree", "RBTree\RBTree.vcxproj", "{544B6A8E-58BD-412B-B2C3-0F07C8ABDBA4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -113,6 +115,14 @@ Global
 		{92B01FCF-3D7F-4F7F-AF9B-C1A5754343EE}.Release|x64.Build.0 = Release|x64
 		{92B01FCF-3D7F-4F7F-AF9B-C1A5754343EE}.Release|x86.ActiveCfg = Release|Win32
 		{92B01FCF-3D7F-4F7F-AF9B-C1A5754343EE}.Release|x86.Build.0 = Release|Win32
+		{544B6A8E-58BD-412B-B2C3-0F07C8ABDBA4}.Debug|x64.ActiveCfg = Debug|x64
+		{544B6A8E-58BD-412B-B2C3-0F07C8ABDBA4}.Debug|x64.Build.0 = Debug|x64
+		{544B6A8E-58BD-412B-B2C3-0F07C8ABDBA4}.Debug|x86.ActiveCfg = Debug|Win32
+		{544B6A8E-58BD-412B-B2C3-0F07C8ABDBA4}.Debug|x86.Build.0 = Debug|Win32
+		{544B6A8E-58BD-412B-B2C3-0F07C8ABDBA4}.Release|x64.ActiveCfg = Release|x64
+		{544B6A8E-58BD-412B-B2C3-0F07C8ABDBA4}.Release|x64.Build.0 = Release|x64
+		{544B6A8E-58BD-412B-B2C3-0F07C8ABDBA4}.Release|x86.ActiveCfg = Release|Win32
+		{544B6A8E-58BD-412B-B2C3-0F07C8ABDBA4}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
