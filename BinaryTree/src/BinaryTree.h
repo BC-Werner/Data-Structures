@@ -1,7 +1,6 @@
 #pragma once
 
 #include <initializer_list>
-#include "../../Vector/src/Vector.hpp"
 
 template <typename T>
 class BinaryTree
@@ -26,83 +25,92 @@ public:
 	private:
 		BNode* p;
 		BNode* tree_root;
-		Vector<BNode*> predecessors;
 
-		void findPredecessors(const BNode* p) 
+		BNode* inorder_Predecessor() 
 		{
-			if (!tree_root) return;
-
-			predecessors.clear();
-
-			BNode* tmp = tree_root;
-			while (tmp->pLeft)
-				tmp = tmp->pLeft;
-
-			predecessors.push_back(tmp);
-
-			while (tmp && tmp != p)
+			// Empty Root Node
+			if (p == tree_root)
 			{
-				if (tmp->pRight && !contains(tmp->pRight))
-				{
-					tmp = tmp->pRight;
-					while (tmp->pLeft)
-						tmp = tmp->pLeft;
-					predecessors.push_back(tmp);
-				}
-				else
-				{
-					tmp = tmp->pParent;
-					if (!contains(tmp))
-						predecessors.push_back(tmp);
-				}
+				BNode* curr = p;
+				if (curr->pLeft) curr = curr->pLeft;
+				while (curr->pRight)
+					curr = curr->pRight;
+				return curr;
 			}
+
+			// Leaf node or right only
+			if (!p->pLeft)
+			{
+				BNode* curr = p->pParent;
+				BNode* lastVisited = p;
+				while (lastVisited == curr->pLeft)
+				{
+					if (!curr->pParent) return nullptr;
+					lastVisited = curr;
+					curr = curr->pParent;
+				}
+				return curr;
+			}
+
+			// Not Leaf Node
+			if (p->pLeft)
+			{
+				BNode* curr = p->pLeft;
+				while (curr->pRight)
+					curr = curr->pRight;
+				return curr;
+			}
+			return nullptr;
 		}
-
-		const bool contains(BNode* p) { for (auto node : predecessors) if (node == p) return true; return false; }
-
-	public:
-		Iterator(BNode* ptr, BNode* root) : p(ptr), tree_root(root)             { findPredecessors(p); }
-		Iterator(Iterator const& rhs)     : p(rhs.p), tree_root(rhs.tree_root)  { findPredecessors(p); }
-
-		void             operator=(Iterator const& rhs) { p = rhs.p; tree_root = rhs.tree_root; findPredecessors(p); }
-		bool             operator==(const Iterator& it) const { return it.p == p; }
-		bool             operator!=(const Iterator& it) const { return it.p != p; }
-		Iterator&        operator++()
+		BNode* inorder_Successor() 
 		{
-			predecessors.push_back(p);
-			// Find Successor
-			// if node has a right go right then as far left as possible
-			// if node has no right go to its parent until its parent is not in the list of predecessors
+			// Empty Root Node
+			if (p == tree_root)
+			{
+				BNode* curr = p;
+				if (curr->pRight) curr = curr->pRight;
+				while (curr->pLeft)
+					curr = curr->pLeft;
+				return curr;
+			}
+
+			// Leaf Node or only Left child
+			if (!p->pRight)
+			{
+				BNode* curr = p->pParent;
+				BNode* lastVisited = p;
+				while (lastVisited == curr->pRight)
+				{
+					if (!curr->pParent) return nullptr;
+					lastVisited = curr;
+					curr = curr->pParent;
+				}
+				return curr;
+			}
+			 
+			// Not Leaf Node
 			if (p->pRight)
 			{
-				p = p->pRight;
-				while (p->pLeft)
-					p = p->pLeft;
+				BNode* curr = p->pRight;
+				while (curr->pLeft)
+					curr = curr->pLeft;
+				return curr;
 			}
-			else
-			{
-				if (p->pParent) p = p->pParent;
-				while (p && contains(p))
-					p = p->pParent;
-			}
-
-			return *this;
+			return nullptr;
 		}
-		Iterator&        operator--() 
-		{ 
-			if (predecessors.size() < 1) 
-			{ 
-				p = nullptr; 
-				return *this; 
-			} 
 
-			p = predecessors.back(); 
-			predecessors.pop_back();
-			return* this;
-	    }
-		const Iterator&  operator++(int)          { Iterator tmp = *this; ++(*this); return tmp; }
-		const Iterator&  operator--(int)          { Iterator tmp = *this; --(*this); return tmp; }
-		T                operator*()              { return p->data; }
+	public:
+		Iterator(BNode* ptr, BNode* root) : p(ptr), tree_root(root)             {}
+		Iterator(Iterator const& rhs)     : p(rhs.p), tree_root(rhs.tree_root)  {}
+
+		void             operator=(Iterator const& rhs)       { p = rhs.p; tree_root = rhs.tree_root; }
+		bool             operator==(const Iterator& it) const { return it.p == p; }
+		bool             operator!=(const Iterator& it) const { return it.p != p; }
+		Iterator&        operator++()                         { p = inorder_Successor(); return *this; }
+		Iterator&        operator--()                         { p = inorder_Predecessor(); return *this; }
+		const Iterator&  operator++(int)                      { Iterator tmp = *this; ++(*this); return tmp; }
+		const Iterator&  operator--(int)                      { Iterator tmp = *this; --(*this); return tmp; }
+		T                operator*()                          { return p->data; }
 
 		friend class BinaryTree;
 	};
