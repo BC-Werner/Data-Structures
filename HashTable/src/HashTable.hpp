@@ -14,6 +14,8 @@ public:
 
 	HashTable();
 	HashTable(int capacity);
+	HashTable(const HashTable& rhs);
+	HashTable(HashTable&& rhs);
 	~HashTable();
 
 	void insert(const K& key, V& value);
@@ -55,6 +57,34 @@ HashTable<K, V>::HashTable(int capacity)
 }
 
 template<typename K, typename V>
+inline HashTable<K, V>::HashTable(const HashTable& rhs)
+{
+	m_capacity = rhs.m_capacity;
+	m_size = rhs.m_size;
+	m_load_factor = rhs.m_load_factor;
+
+	m_table = new HashNodePtr[m_capacity];
+	std::fill(m_table, m_table + m_capacity, nullptr);
+	m_dummy = HashNode(K(-1), V(-1));
+
+	for (int i = 0; i < rhs.m_capacity; i++)
+	{
+		if (rhs.m_table[i] && rhs.m_table[i] != rhs.m_dummy)
+			insert(rhs.m_table[i]->first, rhs.m_table[i]->second);
+	}
+}
+
+template<typename K, typename V>
+inline HashTable<K, V>::HashTable(HashTable&& rhs)
+	: m_table(std::move(rhs.m_table)),
+	  m_capacity(std::move(rhs.m_capacity)),
+	  m_size(std::move(rhs.m_size)),
+	  m_load_factor(std::move(rhs.m_load_factor)),
+	  m_dummy(std::move(rhs.m_dummy))
+{
+}
+
+template<typename K, typename V>
 HashTable<K, V>::~HashTable()
 {
 	delete[] m_table;
@@ -69,5 +99,3 @@ template<typename K, typename V>
 void HashTable<K, V>::resize(int capacity)
 {
 }
-
-
