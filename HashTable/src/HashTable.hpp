@@ -99,8 +99,7 @@ void HashTable<K, V, F>::insert(const K& key, V& value)
 {
 	HashNodePtr node = new HashNode(key, value);
 
-	//const size_t KEYHASH = hash(key) % m_capacity;
-	const size_t KEYHASH = static_cast<size_t>(key) % m_capacity;
+	const size_t KEYHASH = hash(key) % m_capacity;
 
 	size_t index = KEYHASH;
 	int counter = 1;
