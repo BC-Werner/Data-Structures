@@ -1,5 +1,6 @@
 #pragma once
 #include <algorithm>
+#include <cassert>
 #include "Hash.hpp"
 
 // Definition //////////////////////////////////////////////////////////////////////////////////////
@@ -43,6 +44,7 @@ template<typename K, typename V, typename F>
 HashTable<K, V, F>::HashTable()
 	: m_capacity(2), m_size(0)
 {
+	m_dummy = HashNode(K(-1), V(-1));
 }
 
 template<typename K, typename V, typename F>
@@ -54,7 +56,7 @@ HashTable<K, V, F>::HashTable(int capacity)
 	m_capacity = static_cast<size_t>(pow(2, power));
 
 	// Allow user to specify a resize function to match hash function?
-	//resize(capacity);
+	resize(capacity);
 
 	m_table = new HashNodePtr[capacity];
 	std::fill(m_table, m_table + m_capacity, nullptr);
@@ -106,6 +108,12 @@ void HashTable<K, V, F>::insert(const K& key, V& value)
 	int counter = 1;
 	while (m_table[index] != nullptr && counter < m_capacity)
 	{
+		// Overrite dummy node if encountered
+		if (m_table[index] == m_dummy)
+		{
+			break;
+		}
+
 		// No duplicates
 		if (m_table[index]->first == key)
 		{
@@ -124,6 +132,8 @@ void HashTable<K, V, F>::insert(const K& key, V& value)
 template<typename K, typename V, typename F>
 void HashTable<K, V, F>::resize(int capacity)
 {
+	assert(capacity > m_capacity);
+
 	HashTable<K, V, F> other(m_capacity * 2);
 
 	for (int i = 0; i < m_capacity; i++)
