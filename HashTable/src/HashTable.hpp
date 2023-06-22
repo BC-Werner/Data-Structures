@@ -1,13 +1,15 @@
 #pragma once
 #include <algorithm>
+#include "Hash.hpp"
 
 // Definition //////////////////////////////////////////////////////////////////////////////////////
-template <typename K, typename V>
+template <typename K, typename V, typename F = Hash<K>>
 class HashTable
 {
 private:
 	using HashNode = std::pair<K, V>;
 	using HashNodePtr = HashNode*;
+	using HashFunctor = F;
 
 public:
 	using ValueType = HashNode;
@@ -31,18 +33,19 @@ private:
 	float m_load_factor = 0.4f;
 
 	HashNode m_dummy;
+	HashFunctor hash;
 };
 
 
 // Implementation //////////////////////////////////////////////////////////////////////////////////
-template<typename K, typename V>
-HashTable<K, V>::HashTable()
+template<typename K, typename V, typename F>
+HashTable<K, V, F>::HashTable()
 	: m_capacity(2), m_size(0)
 {
 }
 
-template<typename K, typename V>
-HashTable<K, V>::HashTable(int capacity)
+template<typename K, typename V, typename F>
+HashTable<K, V, F>::HashTable(int capacity)
 	: m_size(0)
 {
 	// Keep capacity at a power of two
@@ -57,8 +60,8 @@ HashTable<K, V>::HashTable(int capacity)
 	m_dummy = HashNode(K(-1), V(-1));
 }
 
-template<typename K, typename V>
-inline HashTable<K, V>::HashTable(const HashTable& rhs)
+template<typename K, typename V, typename F>
+inline HashTable<K, V, F>::HashTable(const HashTable& rhs)
 {
 	m_capacity = rhs.m_capacity;
 	m_size = rhs.m_size;
@@ -75,8 +78,8 @@ inline HashTable<K, V>::HashTable(const HashTable& rhs)
 	}
 }
 
-template<typename K, typename V>
-inline HashTable<K, V>::HashTable(HashTable&& rhs)
+template<typename K, typename V, typename F>
+inline HashTable<K, V, F>::HashTable(HashTable&& rhs)
 	: m_table(std::move(rhs.m_table)),
 	  m_capacity(std::move(rhs.m_capacity)),
 	  m_size(std::move(rhs.m_size)),
@@ -85,14 +88,14 @@ inline HashTable<K, V>::HashTable(HashTable&& rhs)
 {
 }
 
-template<typename K, typename V>
-HashTable<K, V>::~HashTable()
+template<typename K, typename V, typename F>
+HashTable<K, V, F>::~HashTable()
 {
 	delete[] m_table;
 }
 
-template<typename K, typename V>
-void HashTable<K, V>::insert(const K& key, V& value)
+template<typename K, typename V, typename F>
+void HashTable<K, V, F>::insert(const K& key, V& value)
 {
 	HashNodePtr node = new HashNode(key, value);
 
@@ -118,13 +121,13 @@ void HashTable<K, V>::insert(const K& key, V& value)
 	m_size++;
 }
 
-template<typename K, typename V>
-void HashTable<K, V>::resize(int capacity)
+template<typename K, typename V, typename F>
+void HashTable<K, V, F>::resize(int capacity)
 {
 }
 
-template<typename K, typename V>
-size_t HashTable<K, V>::probe(size_t x) const
+template<typename K, typename V, typename F>
+size_t HashTable<K, V, F>::probe(size_t x) const
 {
 	return ((x * x) + x) / 2;
 }
