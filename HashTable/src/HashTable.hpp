@@ -22,6 +22,7 @@ public:
 
 private:
 	void resize(int capacity);
+	size_t probe(size_t x) const;
 
 private:
 	HashNodePtr* m_table;
@@ -93,9 +94,37 @@ HashTable<K, V>::~HashTable()
 template<typename K, typename V>
 void HashTable<K, V>::insert(const K& key, V& value)
 {
+	HashNodePtr node = new HashNode(key, value);
+
+	//const size_t KEYHASH = hash(key) % m_capacity;
+	const size_t KEYHASH = static_cast<size_t>(key) % m_capacity;
+
+	size_t index = KEYHASH;
+	int counter = 1;
+	while (m_table[index] != nullptr && counter < m_capacity)
+	{
+		// No duplicates
+		if (m_table[index]->first == key)
+		{
+			delete node;
+			return;
+		}
+
+		index = KEYHASH + probe(counter) % m_capacity;
+		counter++;
+	}
+
+	m_table[index] = node;
+	m_size++;
 }
 
 template<typename K, typename V>
 void HashTable<K, V>::resize(int capacity)
 {
+}
+
+template<typename K, typename V>
+size_t HashTable<K, V>::probe(size_t x) const
+{
+	return ((x * x) + x) / 2;
 }
