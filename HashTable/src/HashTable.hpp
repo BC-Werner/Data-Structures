@@ -25,6 +25,7 @@ public:
 private:
 	void resize(int capacity);
 	size_t probe(size_t x) const;
+	void swap(HashTable&& rhs);
 
 private:
 	HashNodePtr* m_table;
@@ -123,10 +124,32 @@ void HashTable<K, V, F>::insert(const K& key, V& value)
 template<typename K, typename V, typename F>
 void HashTable<K, V, F>::resize(int capacity)
 {
+	HashTable<K, V, F> other(m_capacity * 2);
+
+	for (int i = 0; i < m_capacity; i++)
+	{
+		if (m_table[i] != nullptr && m_table[i] != m_dummy)
+		{
+			other.insert(m_table[i]->first, m_table[i]->second);
+		}
+	}
+
+	swap(other);
 }
 
 template<typename K, typename V, typename F>
 size_t HashTable<K, V, F>::probe(size_t x) const
 {
 	return ((x * x) + x) / 2;
+}
+
+template<typename K, typename V, typename F>
+void HashTable<K, V, F>::swap(HashTable&& rhs)
+{
+	std::swap(m_table, rhs.m_table);
+	std::swap(m_capacity, rhs.m_capacity);
+	std::swap(m_size, rhs.m_size);
+	std::swap(m_load_factor, rhs.m_load_factor);
+	std::swap(m_dummy, rhs.m_dummy);
+	std::swap(hash, rhs.hash);
 }
