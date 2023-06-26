@@ -22,6 +22,7 @@ public:
 	~HashTable();
 
 	void insert(const K& key, V& value);
+	void erase(const K& key);
 
 private:
 	void resize(int capacity);
@@ -100,6 +101,11 @@ HashTable<K, V, F>::~HashTable()
 template<typename K, typename V, typename F>
 void HashTable<K, V, F>::insert(const K& key, V& value)
 {
+	if (m_size + 1 >= m_capacity * m_load_factor)
+	{
+		resize(m_capacity * 2);
+	}
+
 	HashNodePtr node = new HashNode(key, value);
 
 	const size_t KEYHASH = hash(key) % m_capacity;
@@ -130,11 +136,33 @@ void HashTable<K, V, F>::insert(const K& key, V& value)
 }
 
 template<typename K, typename V, typename F>
+void HashTable<K, V, F>::erase(const K& key)
+{
+	const size_t KEYHASH = hash(key) % m_capacity;
+	size_t index = KEYHASH;
+	int counter = 1;
+	while (m_table[index] != nullptr && m_table[index]->first != key && counter < m_capacity)
+	{
+		index = KEYHASH + probe(counter) % m_capacity;
+		counter++;
+
+		// Key not found
+		if (counter == m_capacity)
+		{
+			return;
+		}
+	}
+
+	m_table[index] = m_dummy;
+	m_size--;
+}
+
+template<typename K, typename V, typename F>
 void HashTable<K, V, F>::resize(int capacity)
 {
 	assert(capacity > m_capacity);
 
-	HashTable<K, V, F> other(m_capacity * 2);
+	HashTable<K, V, F> other(capacity);
 
 	for (int i = 0; i < m_capacity; i++)
 	{
