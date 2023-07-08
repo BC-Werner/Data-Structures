@@ -26,6 +26,9 @@ public:
 	void insert(const K& key, V& value);
 	void erase(const K& key);
 
+	Iterator begin();
+	Iterator end();
+
 private:
 	void resize(int capacity);
 	size_t probe(size_t x) const;
@@ -157,6 +160,31 @@ void HashTable<K, V, F>::erase(const K& key)
 
 	m_table[index] = m_dummy;
 	m_size--;
+}
+
+template<typename K, typename V, typename F>
+HashTable<K, V, F>::Iterator HashTable<K, V, F>::begin()
+{
+	if (m_size <= 0)
+	{
+		return Iterator(nullptr);
+	}
+
+	int index = 0;
+	HashNodePtr ptr = m_table[index];
+
+	while (ptr == nullptr || *ptr == m_dummy)
+	{
+		ptr = m_table[++index];
+	}
+
+	return Iterator(ptr);
+}
+
+template<typename K, typename V, typename F>
+HashTable<K, V, F>::Iterator HashTable<K, V, F>::end()
+{
+	return Iterator(nullptr);
 }
 
 template<typename K, typename V, typename F>
