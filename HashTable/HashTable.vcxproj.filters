@@ -6,5 +6,6 @@
   <ItemGroup>
     <ClInclude Include="src\HashTable.hpp" />
     <ClInclude Include="src\Hash.hpp" />
+    <ClInclude Include="src\HashTableIterator.h" />
   </ItemGroup>
 </Project>

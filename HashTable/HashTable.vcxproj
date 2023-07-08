@@ -148,6 +148,7 @@
   <ItemGroup>
     <ClInclude Include="src\Hash.hpp" />
     <ClInclude Include="src\HashTable.hpp" />
+    <ClInclude Include="src\HashTableIterator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

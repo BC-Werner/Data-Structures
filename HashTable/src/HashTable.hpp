@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cassert>
 #include "Hash.hpp"
+#include "HashTableIterator.h"
 
 // Definition //////////////////////////////////////////////////////////////////////////////////////
 template <typename K, typename V, typename F = Hash<K>>
@@ -14,6 +15,7 @@ private:
 
 public:
 	using ValueType = HashNode;
+	using Iterator = HashTableIterator<HashTable<K, V, F>>;
 
 	HashTable();
 	HashTable(int capacity);
