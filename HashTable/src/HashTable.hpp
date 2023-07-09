@@ -23,16 +23,21 @@ public:
 	HashTable(HashTable&& rhs);
 	~HashTable();
 
-	void insert(const K& key, V& value);
+	void insert(const K& key, V value);
 	void erase(const K& key);
+	bool empty() const;
 
-	Iterator begin();
-	Iterator end();
+	//Iterator begin();
+	//Iterator end();
+
+	void _print() const; // To be deleted
 
 private:
 	void resize(int capacity);
 	size_t probe(size_t x) const;
-	void swap(HashTable&& rhs);
+	void swap(HashTable& rhs);
+	void clean();
+
 
 private:
 	HashNodePtr* m_table;
@@ -41,6 +46,7 @@ private:
 	float m_load_factor = 0.4f;
 
 	HashNode m_dummy;
+	HashNode m_end;
 	HashFunctor hash;
 };
 
@@ -50,7 +56,11 @@ template<typename K, typename V, typename F>
 HashTable<K, V, F>::HashTable()
 	: m_capacity(2), m_size(0)
 {
+	m_table = new HashNodePtr[2];
+	std::fill(m_table, m_table + m_capacity, nullptr);
+
 	m_dummy = HashNode(K(-1), V(-1));
+	m_end = HashNode(K(-1), V(-1));
 }
 
 template<typename K, typename V, typename F>
@@ -62,11 +72,13 @@ HashTable<K, V, F>::HashTable(int capacity)
 	m_capacity = static_cast<size_t>(pow(2, power));
 
 	// Allow user to specify a resize function to match hash function?
-	resize(capacity);
+	//resize(capacity);
 
-	m_table = new HashNodePtr[capacity];
+	m_table = new HashNodePtr[m_capacity];
 	std::fill(m_table, m_table + m_capacity, nullptr);
+
 	m_dummy = HashNode(K(-1), V(-1));
+	m_end = HashNode(K(-1), V(-1));
 }
 
 template<typename K, typename V, typename F>
@@ -78,7 +90,9 @@ inline HashTable<K, V, F>::HashTable(const HashTable& rhs)
 
 	m_table = new HashNodePtr[m_capacity];
 	std::fill(m_table, m_table + m_capacity, nullptr);
+
 	m_dummy = HashNode(K(-1), V(-1));
+	m_end = HashNode(K(-1), V(-1));
 
 	for (int i = 0; i < rhs.m_capacity; i++)
 	{
@@ -100,11 +114,12 @@ inline HashTable<K, V, F>::HashTable(HashTable&& rhs)
 template<typename K, typename V, typename F>
 HashTable<K, V, F>::~HashTable()
 {
+	clean();
 	delete[] m_table;
 }
 
 template<typename K, typename V, typename F>
-void HashTable<K, V, F>::insert(const K& key, V& value)
+void HashTable<K, V, F>::insert(const K& key, V value)
 {
 	if (m_size + 1 >= m_capacity * m_load_factor)
 	{
@@ -120,7 +135,7 @@ void HashTable<K, V, F>::insert(const K& key, V& value)
 	while (m_table[index] != nullptr && counter < m_capacity)
 	{
 		// Overrite dummy node if encountered
-		if (m_table[index] == m_dummy)
+		if (m_table[index] == &m_dummy)
 		{
 			break;
 		}
@@ -150,53 +165,65 @@ void HashTable<K, V, F>::erase(const K& key)
 	{
 		index = KEYHASH + probe(counter) % m_capacity;
 		counter++;
-
-		// Key not found
-		if (counter == m_capacity)
-		{
-			return;
-		}
 	}
 
-	m_table[index] = m_dummy;
+	// Key not found
+	if (counter == m_capacity)
+	{
+		return;
+	}
+
+	m_table[index] = &m_dummy;
 	m_size--;
 }
 
 template<typename K, typename V, typename F>
-HashTable<K, V, F>::Iterator HashTable<K, V, F>::begin()
+bool HashTable<K, V, F>::empty() const
 {
-	if (m_size <= 0)
-	{
-		return Iterator(nullptr);
-	}
-
-	int index = 0;
-	HashNodePtr ptr = m_table[index];
-
-	while (ptr == nullptr || *ptr == m_dummy)
-	{
-		ptr = m_table[++index];
-	}
-
-	return Iterator(ptr);
+	return m_size == 0;
 }
-
-template<typename K, typename V, typename F>
-HashTable<K, V, F>::Iterator HashTable<K, V, F>::end()
-{
-	return Iterator(nullptr);
-}
+//
+//template<typename K, typename V, typename F>
+//HashTable<K, V, F>::Iterator HashTable<K, V, F>::begin()
+//{
+//	if (empty())
+//	{
+//		return Iterator(&m_end);
+//	}
+//
+//	int index = 0;
+//	HashNodePtr ptr = m_table[index];
+//
+//	while (ptr == nullptr || ptr == &m_dummy)
+//	{
+//		if (index + 1 >= m_capacity)
+//		{
+//			return Iterator(&m_end);
+//		}
+//
+//		ptr = m_table[++index];
+//	}
+//
+//	return Iterator(ptr);
+//}
+//
+//template<typename K, typename V, typename F>
+//HashTable<K, V, F>::Iterator HashTable<K, V, F>::end()
+//{
+//	return Iterator(&m_end);
+//}
 
 template<typename K, typename V, typename F>
 void HashTable<K, V, F>::resize(int capacity)
 {
+	std::cout << "m_capacity: " << m_capacity << " new capacity: " << capacity << std::endl;
 	assert(capacity > m_capacity);
 
 	HashTable<K, V, F> other(capacity);
 
 	for (int i = 0; i < m_capacity; i++)
 	{
-		if (m_table[i] != nullptr && m_table[i] != m_dummy)
+		if (m_table[i] != nullptr && m_table[i] != &m_dummy)
 		{
 			other.insert(m_table[i]->first, m_table[i]->second);
 		}
@@ -212,7 +239,7 @@ size_t HashTable<K, V, F>::probe(size_t x) const
 }
 
 template<typename K, typename V, typename F>
-void HashTable<K, V, F>::swap(HashTable&& rhs)
+void HashTable<K, V, F>::swap(HashTable& rhs)
 {
 	std::swap(m_table, rhs.m_table);
 	std::swap(m_capacity, rhs.m_capacity);
@@ -220,4 +247,29 @@ void HashTable<K, V, F>::swap(HashTable&& rhs)
 	std::swap(m_load_factor, rhs.m_load_factor);
 	std::swap(m_dummy, rhs.m_dummy);
 	std::swap(hash, rhs.hash);
+}
+
+template<typename K, typename V, typename F>
+void HashTable<K, V, F>::clean()
+{
+	for (int i = 0; i < m_capacity; i++)
+	{
+		if (m_table[i] != nullptr)
+		{
+			delete m_table[i];
+		}
+	}
+}
+
+template<typename K, typename V, typename F>
+inline void HashTable<K, V, F>::_print() const
+{
+	for (int i = 0; i < m_capacity; i++)
+	{
+		if (m_table[i] && m_table[i] != &m_dummy)
+			std::cout << m_table[i]->first << ", " << m_table[i]->second << " ";
+		else
+			std::cout << "_ ";
+	}
+	std::cout << std::endl;
 }
