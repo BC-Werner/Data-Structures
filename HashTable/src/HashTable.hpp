@@ -27,8 +27,8 @@ public:
 	void erase(const K& key);
 	bool empty() const;
 
-	//Iterator begin();
-	//Iterator end();
+	HashTableIterator<HashTable<K, V, F>> begin();
+	HashTableIterator<HashTable<K, V, F>> end();
 
 	void _print() const; // To be deleted
 
@@ -182,36 +182,36 @@ bool HashTable<K, V, F>::empty() const
 {
 	return m_size == 0;
 }
-//
-//template<typename K, typename V, typename F>
-//HashTable<K, V, F>::Iterator HashTable<K, V, F>::begin()
-//{
-//	if (empty())
-//	{
-//		return Iterator(&m_end);
-//	}
-//
-//	int index = 0;
-//	HashNodePtr ptr = m_table[index];
-//
-//	while (ptr == nullptr || ptr == &m_dummy)
-//	{
-//		if (index + 1 >= m_capacity)
-//		{
-//			return Iterator(&m_end);
-//		}
-//
-//		ptr = m_table[++index];
-//	}
-//
-//	return Iterator(ptr);
-//}
-//
-//template<typename K, typename V, typename F>
-//HashTable<K, V, F>::Iterator HashTable<K, V, F>::end()
-//{
-//	return Iterator(&m_end);
-//}
+
+template<typename K, typename V, typename F>
+HashTableIterator<HashTable<K, V, F>> HashTable<K, V, F>::begin()
+{
+	if (empty())
+	{
+		return Iterator(&m_end);
+	}
+
+	int index = 0;
+	HashNodePtr ptr = m_table[index];
+
+	while (ptr == nullptr || ptr == &m_dummy)
+	{
+		if (index + 1 >= m_capacity)
+		{
+			return Iterator(&m_end);
+		}
+
+		ptr = m_table[++index];
+	}
+
+	return Iterator(ptr);
+}
+
+template<typename K, typename V, typename F>
+HashTableIterator<HashTable<K, V, F>> HashTable<K, V, F>::end()
+{
+	return Iterator(&m_end);
+}
 
 template<typename K, typename V, typename F>
 void HashTable<K, V, F>::resize(int capacity)
