@@ -27,8 +27,8 @@ public:
 	void erase(const K& key);
 	bool empty() const;
 
-	HashTableIterator<HashTable<K, V, F>> begin();
-	HashTableIterator<HashTable<K, V, F>> end();
+	Iterator begin() const;
+	Iterator end() const;
 
 	void _print() const; // To be deleted
 
@@ -70,9 +70,6 @@ HashTable<K, V, F>::HashTable(int capacity)
 	// Keep capacity at a power of two
 	int power = static_cast<int>(ceil(log2(capacity)));
 	m_capacity = static_cast<size_t>(pow(2, power));
-
-	// Allow user to specify a resize function to match hash function?
-	//resize(capacity);
 
 	m_table = new HashNodePtr[m_capacity];
 	std::fill(m_table, m_table + m_capacity, nullptr);
@@ -184,7 +181,7 @@ bool HashTable<K, V, F>::empty() const
 }
 
 template<typename K, typename V, typename F>
-HashTableIterator<HashTable<K, V, F>> HashTable<K, V, F>::begin()
+HashTableIterator<HashTable<K, V, F>> HashTable<K, V, F>::begin() const
 {
 	if (empty())
 	{
@@ -208,7 +205,7 @@ HashTableIterator<HashTable<K, V, F>> HashTable<K, V, F>::begin()
 }
 
 template<typename K, typename V, typename F>
-HashTableIterator<HashTable<K, V, F>> HashTable<K, V, F>::end()
+HashTableIterator<HashTable<K, V, F>> HashTable<K, V, F>::end() const
 {
 	return Iterator(&m_end);
 }
