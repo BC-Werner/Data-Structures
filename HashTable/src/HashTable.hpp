@@ -181,7 +181,7 @@ bool HashTable<K, V, F>::empty() const
 }
 
 template<typename K, typename V, typename F>
-HashTableIterator<HashTable<K, V, F>> HashTable<K, V, F>::begin()
+typename HashTable<K,V,F>::Iterator HashTable<K, V, F>::begin()
 {
 	if (empty())
 	{
@@ -205,7 +205,7 @@ HashTableIterator<HashTable<K, V, F>> HashTable<K, V, F>::begin()
 }
 
 template<typename K, typename V, typename F>
-HashTableIterator<HashTable<K, V, F>> HashTable<K, V, F>::end()
+typename HashTable<K,V,F>::Iterator HashTable<K, V, F>::end()
 {
 	return Iterator(&m_end);
 }
