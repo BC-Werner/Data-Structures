@@ -27,8 +27,8 @@ public:
 	void erase(const K& key);
 	bool empty() const;
 
-	Iterator begin() const;
-	Iterator end() const;
+	Iterator begin();
+	Iterator end();
 
 	void _print() const; // To be deleted
 
@@ -181,7 +181,7 @@ bool HashTable<K, V, F>::empty() const
 }
 
 template<typename K, typename V, typename F>
-HashTableIterator<HashTable<K, V, F>> HashTable<K, V, F>::begin() const
+HashTableIterator<HashTable<K, V, F>> HashTable<K, V, F>::begin()
 {
 	if (empty())
 	{
@@ -205,7 +205,7 @@ HashTableIterator<HashTable<K, V, F>> HashTable<K, V, F>::begin() const
 }
 
 template<typename K, typename V, typename F>
-HashTableIterator<HashTable<K, V, F>> HashTable<K, V, F>::end() const
+HashTableIterator<HashTable<K, V, F>> HashTable<K, V, F>::end()
 {
 	return Iterator(&m_end);
 }
