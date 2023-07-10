@@ -213,7 +213,6 @@ typename HashTable<K,V,F>::Iterator HashTable<K, V, F>::end()
 template<typename K, typename V, typename F>
 void HashTable<K, V, F>::resize(int capacity)
 {
-	std::cout << "m_capacity: " << m_capacity << " new capacity: " << capacity << std::endl;
 	assert(capacity > m_capacity);
 
 	HashTable<K, V, F> other(capacity);
@@ -264,9 +263,9 @@ inline void HashTable<K, V, F>::_print() const
 	for (int i = 0; i < m_capacity; i++)
 	{
 		if (m_table[i] && m_table[i] != &m_dummy)
-			std::cout << m_table[i]->first << ", " << m_table[i]->second << " ";
+			std::cout << "[" << m_table[i]->first << " -> " << m_table[i]->second << "] ";
 		else
-			std::cout << "_ ";
+			std::cout << "[ ] ";
 	}
 	std::cout << std::endl;
 }
