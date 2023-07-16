@@ -53,7 +53,7 @@ private:
 
 // Implementation //////////////////////////////////////////////////////////////////////////////////
 template<typename K, typename V, typename F>
-HashTable<K, V, F>::HashTable()
+inline HashTable<K, V, F>::HashTable()
 	: m_capacity(2), m_size(0)
 {
 	m_table = new HashNodePtr[2];
@@ -64,7 +64,7 @@ HashTable<K, V, F>::HashTable()
 }
 
 template<typename K, typename V, typename F>
-HashTable<K, V, F>::HashTable(int capacity)
+inline HashTable<K, V, F>::HashTable(int capacity)
 	: m_size(0)
 {
 	// Keep capacity at a power of two
@@ -109,14 +109,14 @@ inline HashTable<K, V, F>::HashTable(HashTable&& rhs)
 }
 
 template<typename K, typename V, typename F>
-HashTable<K, V, F>::~HashTable()
+inline HashTable<K, V, F>::~HashTable()
 {
 	clean();
 	delete[] m_table;
 }
 
 template<typename K, typename V, typename F>
-void HashTable<K, V, F>::insert(const K& key, V value)
+inline void HashTable<K, V, F>::insert(const K& key, V value)
 {
 	if (m_size + 1 >= m_capacity * m_load_factor)
 	{
@@ -153,7 +153,7 @@ void HashTable<K, V, F>::insert(const K& key, V value)
 }
 
 template<typename K, typename V, typename F>
-void HashTable<K, V, F>::erase(const K& key)
+inline void HashTable<K, V, F>::erase(const K& key)
 {
 	const size_t KEYHASH = hash(key) % m_capacity;
 	size_t index = KEYHASH;
@@ -175,13 +175,13 @@ void HashTable<K, V, F>::erase(const K& key)
 }
 
 template<typename K, typename V, typename F>
-bool HashTable<K, V, F>::empty() const
+inline bool HashTable<K, V, F>::empty() const
 {
 	return m_size == 0;
 }
 
 template<typename K, typename V, typename F>
-typename HashTable<K,V,F>::Iterator HashTable<K, V, F>::begin()
+inline typename HashTable<K,V,F>::Iterator HashTable<K, V, F>::begin()
 {
 	if (empty())
 	{
@@ -205,13 +205,13 @@ typename HashTable<K,V,F>::Iterator HashTable<K, V, F>::begin()
 }
 
 template<typename K, typename V, typename F>
-typename HashTable<K,V,F>::Iterator HashTable<K, V, F>::end()
+inline typename HashTable<K,V,F>::Iterator HashTable<K, V, F>::end()
 {
 	return Iterator(&m_end);
 }
 
 template<typename K, typename V, typename F>
-void HashTable<K, V, F>::resize(int capacity)
+inline void HashTable<K, V, F>::resize(int capacity)
 {
 	assert(capacity > m_capacity);
 
@@ -229,13 +229,13 @@ void HashTable<K, V, F>::resize(int capacity)
 }
 
 template<typename K, typename V, typename F>
-size_t HashTable<K, V, F>::probe(size_t x) const
+inline size_t HashTable<K, V, F>::probe(size_t x) const
 {
 	return ((x * x) + x) / 2;
 }
 
 template<typename K, typename V, typename F>
-void HashTable<K, V, F>::swap(HashTable& rhs)
+inline void HashTable<K, V, F>::swap(HashTable& rhs)
 {
 	std::swap(m_table, rhs.m_table);
 	std::swap(m_capacity, rhs.m_capacity);
@@ -246,7 +246,7 @@ void HashTable<K, V, F>::swap(HashTable& rhs)
 }
 
 template<typename K, typename V, typename F>
-void HashTable<K, V, F>::clean()
+inline void HashTable<K, V, F>::clean()
 {
 	for (int i = 0; i < m_capacity; i++)
 	{
