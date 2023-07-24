@@ -16,12 +16,13 @@ public:
 	HashTableIterator(const HashTableIterator& rhs);
 	HashTableIterator(HashTableIterator&& rhs);
 
-	ValueType         operator * ()     { return *m_ptr; };
-	HashTableIterator operator ++ ()    {};
-	HashTableIterator operator ++ (int) {};
-	HashTableIterator operator -- ()    {};
-	HashTableIterator operator -- (int) {};
-
+	ValueType         operator *  ()                                     { return *m_ptr; };
+	HashTableIterator operator ++ ()                                     {}; // Pre  increment
+	HashTableIterator operator ++ (int)                                  {}; // Post increment
+	HashTableIterator operator -- ()                                     {}; // Pre  decrement
+	HashTableIterator operator -- (int)                                  {}; // Post decrement
+	bool              operator == (const HashTableIterator& other)       { return m_ptr == other.m_ptr; }
+	bool              operator != (const HashTableIterator& other) const { return m_ptr != other.m_ptr; }
 private:
 };
 
