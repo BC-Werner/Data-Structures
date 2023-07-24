@@ -8,6 +8,9 @@
 template <typename K, typename V, typename F = Hash<K>>
 class HashTable
 {
+	template <typename Table>
+	friend class HashTableIterator;
+
 private:
 	using HashNode = std::pair<K, V>;
 	using HashNodePtr = HashNode*;
@@ -45,11 +48,12 @@ private:
 	size_t m_size;
 	float m_load_factor = 0.4f;
 
-	HashNode m_dummy;
-	HashNode m_end;
+	static HashNode DUMMY;
 	HashFunctor hash;
 };
 
+template<typename K, typename V, typename F>
+std::pair<K, V> HashTable<K, V, F>::DUMMY = std::pair<K, V>(K(-1), V(-1));
 
 // Implementation //////////////////////////////////////////////////////////////////////////////////
 template<typename K, typename V, typename F>
@@ -58,9 +62,6 @@ inline HashTable<K, V, F>::HashTable()
 {
 	m_table = new HashNodePtr[2];
 	std::fill(m_table, m_table + m_capacity, nullptr);
-
-	m_dummy = HashNode(K(-1), V(-1));
-	m_end = HashNode(K(-1), V(-1));
 }
 
 template<typename K, typename V, typename F>
@@ -73,9 +74,6 @@ inline HashTable<K, V, F>::HashTable(int capacity)
 
 	m_table = new HashNodePtr[m_capacity];
 	std::fill(m_table, m_table + m_capacity, nullptr);
-
-	m_dummy = HashNode(K(-1), V(-1));
-	m_end = HashNode(K(-1), V(-1));
 }
 
 template<typename K, typename V, typename F>
@@ -88,12 +86,9 @@ inline HashTable<K, V, F>::HashTable(const HashTable& rhs)
 	m_table = new HashNodePtr[m_capacity];
 	std::fill(m_table, m_table + m_capacity, nullptr);
 
-	m_dummy = HashNode(K(-1), V(-1));
-	m_end = HashNode(K(-1), V(-1));
-
 	for (int i = 0; i < rhs.m_capacity; i++)
 	{
-		if (rhs.m_table[i] && rhs.m_table[i] != rhs.m_dummy)
+		if (rhs.m_table[i] && rhs.m_table[i] != rhs.DUMMY)
 			insert(rhs.m_table[i]->first, rhs.m_table[i]->second);
 	}
 }
@@ -103,8 +98,7 @@ inline HashTable<K, V, F>::HashTable(HashTable&& rhs)
 	: m_table(std::move(rhs.m_table)),
 	  m_capacity(std::move(rhs.m_capacity)),
 	  m_size(std::move(rhs.m_size)),
-	  m_load_factor(std::move(rhs.m_load_factor)),
-	  m_dummy(std::move(rhs.m_dummy))
+	  m_load_factor(std::move(rhs.m_load_factor))
 {
 }
 
@@ -132,7 +126,7 @@ inline void HashTable<K, V, F>::insert(const K& key, V value)
 	while (m_table[index] != nullptr && counter < m_capacity)
 	{
 		// Overrite dummy node if encountered
-		if (m_table[index] == &m_dummy)
+		if (m_table[index] == &DUMMY)
 		{
 			break;
 		}
@@ -170,7 +164,7 @@ inline void HashTable<K, V, F>::erase(const K& key)
 		return;
 	}
 
-	m_table[index] = &m_dummy;
+	m_table[index] = &DUMMY;
 	m_size--;
 }
 
@@ -185,17 +179,17 @@ inline typename HashTable<K,V,F>::Iterator HashTable<K, V, F>::begin()
 {
 	if (empty())
 	{
-		return Iterator(&m_end);
+		return end();
 	}
 
 	int index = 0;
 	HashNodePtr ptr = m_table[index];
 
-	while (ptr == nullptr || ptr == &m_dummy)
+	while (ptr == nullptr || ptr == &DUMMY)
 	{
 		if (index + 1 >= m_capacity)
 		{
-			return Iterator(&m_end);
+			return end();
 		}
 
 		ptr = m_table[++index];
@@ -207,7 +201,7 @@ inline typename HashTable<K,V,F>::Iterator HashTable<K, V, F>::begin()
 template<typename K, typename V, typename F>
 inline typename HashTable<K,V,F>::Iterator HashTable<K, V, F>::end()
 {
-	return Iterator(&m_end);
+	return Iterator(*(m_table + m_capacity));
 }
 
 template<typename K, typename V, typename F>
@@ -219,7 +213,7 @@ inline void HashTable<K, V, F>::resize(int capacity)
 
 	for (int i = 0; i < m_capacity; i++)
 	{
-		if (m_table[i] != nullptr && m_table[i] != &m_dummy)
+		if (m_table[i] != nullptr && m_table[i] != &DUMMY)
 		{
 			other.insert(m_table[i]->first, m_table[i]->second);
 		}
@@ -241,7 +235,6 @@ inline void HashTable<K, V, F>::swap(HashTable& rhs)
 	std::swap(m_capacity, rhs.m_capacity);
 	std::swap(m_size, rhs.m_size);
 	std::swap(m_load_factor, rhs.m_load_factor);
-	std::swap(m_dummy, rhs.m_dummy);
 	std::swap(hash, rhs.hash);
 }
 
@@ -262,7 +255,7 @@ inline void HashTable<K, V, F>::_print() const
 {
 	for (int i = 0; i < m_capacity; i++)
 	{
-		if (m_table[i] && m_table[i] != &m_dummy)
+		if (m_table[i] && m_table[i] != &DUMMY)
 			std::cout << "[" << m_table[i]->first << " -> " << m_table[i]->second << "] ";
 		else
 			std::cout << "[ ] ";
